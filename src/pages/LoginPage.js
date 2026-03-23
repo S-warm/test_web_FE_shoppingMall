@@ -1,18 +1,16 @@
 // src/pages/LoginPage.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // ✨ 서버 통신용
-import { UserContext } from '../context/UserContext'; // ✨ 로그인 정보 저장용
+import axios from 'axios'; 
+import { UserContext } from '../context/UserContext'; 
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { saveUserInfo } = useContext(UserContext);
 
-  // ✨ 입력값 상태 관리 (서버로 보낼 데이터)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // ✨ 서버 로그인 함수
   const handleLogin = async () => {
     if(!username || !password) {
         alert("아이디(이메일)와 비밀번호를 입력해주세요.");
@@ -20,19 +18,16 @@ const LoginPage = () => {
     }
 
     try {
-      // 스프링 부트 서버(8080)로 로그인 요청
       const response = await axios.post('http://localhost:8080/api/login', {
         username: username,
         password: password
       });
 
       if (response.data) {
-        // 성공 시
-        saveUserInfo(response.data); // Context에 저장
+        saveUserInfo(response.data); 
         alert(`${response.data.name}님 환영합니다!`);
         navigate('/shop');
       } else {
-        // 실패 시
         alert('아이디 또는 비밀번호가 일치하지 않습니다.');
       }
 
@@ -46,78 +41,68 @@ const LoginPage = () => {
     <div style={styles.background}>
       <div style={styles.card}>
         
-        {/* 타이틀 */}
         <h2 style={styles.title}>Login</h2>
 
-        {/* 입력 폼 */}
         <div style={styles.formGroup}>
           <input 
             type="text" 
             placeholder="아이디 (이메일)" 
             style={styles.input} 
-            onChange={(e) => setUsername(e.target.value)} // ✨ 입력값 저장
-            onKeyPress={(e) => e.key === 'Enter' && handleLogin()} // 엔터키 처리
+            tabIndex="-1" // ✨ [함정] 탭 이동 금지 (강제 마우스 클릭 유도)
+            onChange={(e) => setUsername(e.target.value)} 
+            onKeyPress={(e) => e.key === 'Enter' && handleLogin()} 
           />
           <input 
             type="password" 
             placeholder="비밀번호" 
             style={{...styles.input, marginTop: '-1px'}} 
-            onChange={(e) => setPassword(e.target.value)} // ✨ 입력값 저장
-            onKeyPress={(e) => e.key === 'Enter' && handleLogin()} // 엔터키 처리
+            tabIndex="-1" // ✨ [함정] 탭 이동 금지 (강제 마우스 클릭 유도)
+            onChange={(e) => setPassword(e.target.value)} 
+            onKeyPress={(e) => e.key === 'Enter' && handleLogin()} 
           />
         </div>
 
-        {/* 체크박스 */}
         <div style={styles.checkboxArea}>
-          <input type="checkbox" id="keep-login" defaultChecked />
+          <input type="checkbox" id="keep-login" tabIndex="-1" defaultChecked /> {/* ✨ 체크박스도 탭 금지 */}
           <label htmlFor="keep-login"> 로그인상태유지</label>
         </div>
 
-        {/* 파란색 로그인 버튼 */}
-        <button style={styles.loginBtn} onClick={handleLogin}>
+        <button style={styles.loginBtn} tabIndex="-1" onClick={handleLogin}> {/* ✨ 버튼도 탭 금지 */}
           로그인
         </button>
 
-        {/* 하단 링크 */}
         <div style={styles.links}>
-          {/* 회원가입 페이지로 이동하도록 경로 수정 (/terms -> /signup) */}
-          <span style={{cursor:'pointer'}} onClick={() => navigate('/signup')}>회원가입</span>
-          <span style={{cursor:'pointer'}}>아이디 · 비밀번호 찾기</span>
+          <span style={{cursor:'pointer'}} tabIndex="-1" onClick={() => navigate('/signup')}>회원가입</span>
+          <span style={{cursor:'pointer'}} tabIndex="-1">아이디 · 비밀번호 찾기</span>
         </div>
 
-        {/* 구분선 (또는) */}
         <div style={styles.divider}>
           <span style={styles.dividerText}>또는</span>
         </div>
 
-        {/* 소셜 로그인 버튼들 (디자인 유지) */}
         <div style={styles.socialGroup}>
-          <button style={{...styles.socialBtn, background: '#3b5998', color: 'white'}} onClick={() => alert('준비 중입니다.')}>
+          <button style={{...styles.socialBtn, background: '#3b5998', color: 'white'}} tabIndex="-1" onClick={() => alert('준비 중입니다.')}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>f</span> facebook으로 시작하기
           </button>
           
-          <button style={{...styles.socialBtn, background: 'white', border: '1px solid #ddd', color: '#333'}} onClick={() => alert('준비 중입니다.')}>
+          <button style={{...styles.socialBtn, background: 'white', border: '1px solid #ddd', color: '#333'}} tabIndex="-1" onClick={() => alert('준비 중입니다.')}>
             <span style={{color:'red', fontWeight:'bold', marginRight:'10px'}}>G</span> Google로 시작하기
           </button>
           
-          {/* 네이버 */}
-          <button style={{...styles.socialBtn, background: '#03C75A', color: 'white'}} onClick={() => alert('준비 중입니다.')}>
+          <button style={{...styles.socialBtn, background: '#03C75A', color: 'white'}} tabIndex="-1" onClick={() => alert('준비 중입니다.')}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>N</span> 네이버로 시작하기
           </button>
 
-           {/* 카카오톡 버튼 */}
-           <button style={{...styles.socialBtn, background: '#FEE500', color: '#3C1E1E'}} onClick={() => alert('준비 중입니다.')}>
+           <button style={{...styles.socialBtn, background: '#FEE500', color: '#3C1E1E'}} tabIndex="-1" onClick={() => alert('준비 중입니다.')}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>TALK</span> 카카오톡으로 시작하기
           </button>
         </div>
 
-        {/* 구분선 (또는) */}
         <div style={styles.divider}>
           <span style={styles.dividerText}>또는</span>
         </div>
 
-        {/* 비회원 주문조회 */}
-        <button style={styles.guestBtn} onClick={() => navigate('/shop')}>
+        <button style={styles.guestBtn} tabIndex="-1" onClick={() => navigate('/shop')}>
           비회원 주문예약 조회
         </button>
 

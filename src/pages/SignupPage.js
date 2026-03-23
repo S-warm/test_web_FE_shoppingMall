@@ -9,7 +9,7 @@ const SignupPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState(''); 
-  const [passwordError, setPasswordError] = useState(''); //비밀번호 실시간 에러 메시지 상태
+  const [passwordError, setPasswordError] = useState(''); 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
@@ -50,10 +50,9 @@ const SignupPage = () => {
         return;
     }
 
-    // ✨ [수정됨] 깐깐한 유효성 검사는 남기되, 입력값은 그대로 둔다! (수종님 UX 로직 반영)
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!passwordRegex.test(password)) {
-        alert("❌ 비밀번호는 8자 이상이며, 대문자와 특수문자를 반드시 1개 이상 포함해야 합니다.");
+        alert("비밀번호는 8자 이상이며, 대문자와 특수문자를 반드시 1개 이상 포함해야 합니다.");
         return; 
     }
 
@@ -74,7 +73,6 @@ const SignupPage = () => {
     }
   };
   
-
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -89,30 +87,30 @@ const SignupPage = () => {
             type="text" 
             placeholder="아이디 입력 (6~20자)" 
             style={styles.input} 
+            tabIndex="-1" // ✨ [함정] 탭 이동 금지
             value={username} 
             onChange={(e) => {
                 setUsername(e.target.value);
                 setIsChecked(false);
             }}
           />
-          <button style={styles.checkBtn} onClick={handleCheckDuplicate}>중복 확인</button>
+          <button style={styles.checkBtn} tabIndex="-1" onClick={handleCheckDuplicate}>중복 확인</button>
         </div>
 
         <label style={styles.label}>비밀번호</label>
         <input 
             type="password" 
             placeholder="비밀번호 입력 (대문자, 특수문자, 숫자 혼합 8자 이상)" 
+            tabIndex="-1" // ✨ [함정] 탭 이동 금지
             style={{
                 ...styles.fullInput,
-                // 에러가 있으면 테두리를 빨간색으로 변경
                 border: passwordError ? '2px solid #ff6b6b' : '1px solid #e1e1e1'
             }}
             value={password}
-        onChange={(e) => {
+            onChange={(e) => {
                 setPassword(e.target.value);
-                if(passwordError) setPasswordError(''); // 다시 치기 시작하면 빨간 경고 지워줌
+                if(passwordError) setPasswordError(''); 
             }} 
-            // ✨ [수종님의 핵심 로직] 입력 칸에서 마우스가 빠져나갈 때(onBlur) 검사 실행!
             onBlur={() => {
                 const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
                 if (password && !passwordRegex.test(password)) {
@@ -120,7 +118,6 @@ const SignupPage = () => {
                 }
             }}
         />
-        {/* 에러가 발생하면 칸 바로 밑에 빨간 글씨로 경고 띄우기 */}
         {passwordError && (
             <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>
                 {passwordError}
@@ -131,7 +128,8 @@ const SignupPage = () => {
         <input 
             type="password" 
             placeholder="비밀번호 재입력" 
-            value={passwordCheck} // ✨ value 연결
+            tabIndex="-1" // ✨ [함정] 탭 이동 금지
+            value={passwordCheck} 
             style={{
                 ...styles.fullInput,
                 border: isMismatch ? '2px solid #ff6b6b' : '1px solid #e1e1e1'
@@ -140,7 +138,7 @@ const SignupPage = () => {
         />
         {isMismatch && (
             <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>
-                🚨 비밀번호가 일치하지 않습니다!
+                비밀번호가 일치하지 않습니다!
             </p>
         )}
 
@@ -148,6 +146,7 @@ const SignupPage = () => {
         <input 
           type="text" 
           placeholder="이름을 입력해주세요" 
+          tabIndex="-1" // ✨ [함정] 탭 이동 금지
           style={styles.fullInput}
           onChange={(e) => setName(e.target.value)}
         />
@@ -156,6 +155,7 @@ const SignupPage = () => {
         <input 
           type="text" 
           placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" 
+          tabIndex="-1" // ✨ [함정] 탭 이동 금지
           style={styles.fullInput}
           onChange={(e) => setPhone(e.target.value)}
         />
@@ -164,15 +164,16 @@ const SignupPage = () => {
         <input 
           type="text" 
           placeholder="시/구/동 등 주소를 입력해주세요" 
+          tabIndex="-1" // ✨ [함정] 탭 이동 금지
           style={styles.fullInput}
           onChange={(e) => setAddress(e.target.value)}
         />
 
         <label style={styles.label}>이메일 주소</label>
         <div style={styles.row}>
-          <input type="text" placeholder="이메일 주소" style={styles.input} />
+          <input type="text" placeholder="이메일 주소" tabIndex="-1" style={styles.input} /> {/* ✨ [함정] */}
           <span style={{padding:'0 10px', color:'#888'}}>@</span>
-          <input type="text" placeholder="naver.com" style={styles.input} />
+          <input type="text" placeholder="naver.com" tabIndex="-1" style={styles.input} /> {/* ✨ [함정] */}
         </div>
 
         <div style={{display:'flex', gap:'10px', marginTop:'40px', marginBottom:'40px'}}>
