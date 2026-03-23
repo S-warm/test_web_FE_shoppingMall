@@ -156,6 +156,7 @@ const ShopPage = () => {
   const [hoveredProduct, setHoveredProduct] = useState(null);
 
   const [currentCategory, setCurrentCategory] = useState("BEST 20");
+  const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태
   
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -189,9 +190,19 @@ const bestProducts = useMemo(() => {
     return () => clearInterval(slideInterval);
   }, []);
 
- const filteredProducts = currentCategory === "BEST 20" 
-    ? bestProducts
-    : products.filter(p => p.category === currentCategory);
+ // ✨ [수정 완] 검색어(searchQuery)를 실시간으로 감지해서 필터링하는 로직
+  const filteredProducts = useMemo(() => {
+    // 1. 검색창에 글자가 한 글자라도 있으면? -> 무조건 상품 이름으로 검색
+    if (searchQuery.trim() !== "") {
+      return products.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    // 2. 검색창이 비어있으면? -> 기존처럼 카테고리별로 보여줌
+    return currentCategory === "BEST 20" 
+      ? bestProducts
+      : products.filter(p => p.category === currentCategory);
+  }, [searchQuery, currentCategory, bestProducts]);
 
   const openOptionModal = (e, product) => {
     e.preventDefault();
@@ -224,6 +235,18 @@ const bestProducts = useMemo(() => {
             <h1 style={styles.logo}>Swarm</h1>
         </div>
         <div style={styles.headerRight}>
+          {/* 검색창 UI */}
+          <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #333', marginRight: '15px' }}>
+            <input 
+              type="text" 
+              placeholder="상품 검색" 
+              style={{ border: 'none', outline: 'none', width: '120px', padding: '5px' }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <span style={{ cursor: 'pointer' }}>🔍</span>
+          </div>
+
           <span onClick={() => navigate('/cart')} style={styles.iconLink}>🛍 CART</span>
           <span onClick={() => setMyPageOpen(true)} style={styles.iconLink}>
             👤 {user.name ? `${user.name}님` : 'MYPAGE'}
@@ -283,24 +306,37 @@ const bestProducts = useMemo(() => {
       </div>
 
       <div style={styles.gridContainer}>
-        {filteredProducts.map((product) => (
-          <div key={product.id} style={styles.productCard} onClick={() => navigate(`/product/${product.id}`)}
-          // ✨ [추가] 마우스가 들어오면 ID 저장, 나가면 null로 초기화
-            onMouseEnter={() => setHoveredProduct(product.id)}
-            onMouseLeave={() => setHoveredProduct(null)}
-          >
-            <div style={styles.imageWrapper}>
-              <img src={product.img} alt={product.name} style={{...styles.productImage, opacity: 1, 
-                    transition: 'opacity 0.2s ease-in-out'}} />
-            </div>
-            <div style={styles.productName}>{product.name}</div>
-            
-            <div style={styles.priceRow}>
-                <button style={styles.cartIconBtn} onClick={(e) => openOptionModal(e, product)}>🛒</button>
-                <span style={styles.price}>₩{product.price.toLocaleString()}</span>
-            </div>
+        {/* ✨ 괄호 하나로 깔끔하게 수정 완료 + 수종님표 깡통 화면 적용 */}
+        {filteredProducts.length === 0 ? (
+          <div style={{ 
+              gridColumn: '1 / -1', 
+              textAlign: 'center', 
+              padding: '150px 0', 
+              fontSize: '18px', 
+              fontWeight: 'bold',
+              color: '#888' 
+          }}>
+            해당 상품이 없습니다.
           </div>
-        ))}
+        ) : (
+          filteredProducts.map((product) => (
+            <div key={product.id} style={styles.productCard} onClick={() => navigate(`/product/${product.id}`)}
+              onMouseEnter={() => setHoveredProduct(product.id)}
+              onMouseLeave={() => setHoveredProduct(null)}
+            >
+              <div style={styles.imageWrapper}>
+                <img src={product.img} alt={product.name} style={{...styles.productImage, opacity: 1, 
+                      transition: 'opacity 0.2s ease-in-out'}} />
+              </div>
+              <div style={styles.productName}>{product.name}</div>
+              
+              <div style={styles.priceRow}>
+                  <button style={styles.cartIconBtn} onClick={(e) => openOptionModal(e, product)}>🛒</button>
+                  <span style={styles.price}>₩{product.price.toLocaleString()}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* 옵션 모달 */}
