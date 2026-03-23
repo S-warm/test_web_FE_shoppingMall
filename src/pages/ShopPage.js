@@ -151,11 +151,36 @@ const banners = [
 
 // ✨ [함정 추가 1] 팝업창 데이터 세팅 (우측으로 살짝씩 밀리면서 쫘르르 배치)
 const popupAdData = [
-  { id: 1, title: '🔥 특가 세일 최대 80%', bg: '#ff4757', top: '15%', left: '50%', zIndex: 2001 },
-  { id: 2, title: '🎁 신규 가입 1만원 쿠폰', bg: '#1e90ff', top: '20%', left: '55%', zIndex: 2002 },
-  { id: 3, title: '🚚 오늘 하루 전상품 무료배송!', bg: '#2ed573', top: '25%', left: '60%', zIndex: 2003 },
-  { id: 4, title: '⚡ 타임세일 마감 1시간 전!', bg: '#ffa502', top: '30%', left: '65%', zIndex: 2004 },
-  { id: 5, title: '🎉 카톡 플친 추가시 5천원', bg: '#ff6b81', top: '35%', left: '70%', zIndex: 2005 }
+  { 
+    id: 1, 
+    title: 'WEEKEND SALE', subtitle: '주말특가, 최대 75% OFF!', desc: '매주 금/토/일 3일간 최대 혜택!\n설화수, 헤라 단독특집', 
+    img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=400&q=80', 
+    top: '10%', left: '45%', zIndex: 2001 
+  },
+  { 
+    id: 2, 
+    title: 'NEW MEMBER', subtitle: '신규 가입 즉시 10,000P', desc: '지금 가입하고 첫 구매 시\n무료배송 혜택까지 받아가세요.', 
+    img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80', 
+    top: '15%', left: '50%', zIndex: 2002 
+  },
+  { 
+    id: 3, 
+    title: 'SEASON OFF', subtitle: '25 S/S 클리어런스 세일', desc: '놓치면 후회할 마지막 기회\n재고 소진 시 자동 종료됩니다.', 
+    img: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80', 
+    top: '20%', left: '55%', zIndex: 2003 
+  },
+  { 
+    id: 4, 
+    title: 'TIME SALE', subtitle: '마감 임박! 단 2시간 남음', desc: '인기 아우터 반값 특가\n망설이면 품절됩니다.', 
+    img: 'https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?auto=format&fit=crop&w=400&q=80', 
+    top: '25%', left: '60%', zIndex: 2004 
+  },
+  { 
+    id: 5, 
+    title: 'PLUS FRIEND', subtitle: '카톡 플친 추가시 10% 쿠폰', desc: 'Swarm 카카오톡 플러스 친구\n추가하고 시크릿 쿠폰 받기', 
+    img: 'https://images.unsplash.com/photo-1607083206968-13611e3d76ba?auto=format&fit=crop&w=400&q=80', 
+    top: '30%', left: '65%', zIndex: 2005 
+  }
 ];
 
 const ShopPage = () => {
@@ -262,33 +287,53 @@ const bestProducts = useMemo(() => {
         return (
           <div key={popup.id} style={{
             position: 'fixed', top: popup.top, left: popup.left, zIndex: popup.zIndex,
-            width: '280px', height: '350px', backgroundColor: 'white',
-            border: '2px solid #333', boxShadow: '5px 5px 15px rgba(0,0,0,0.3)',
+            width: '320px', height: '420px', backgroundColor: 'white',
+            borderRadius: '8px', overflow: 'hidden', // 둥근 테두리 적용
+            boxShadow: '0 10px 30px rgba(0,0,0,0.25)', // 리얼한 그림자
             display: 'flex', flexDirection: 'column'
           }}>
-            {/* 팝업 내용 영역 */}
-            <div style={{ flex: 1, backgroundColor: popup.bg, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', textAlign: 'center' }}>
-              <h2 style={{ color: 'white', fontSize: '24px', margin: 0 }}>{popup.title}</h2>
+            {/* 고해상도 이미지 + 어두운 오버레이 + 텍스트 영역 */}
+            <div style={{ 
+              flex: 1, position: 'relative', 
+              backgroundImage: `url(${popup.img})`, backgroundSize: 'cover', backgroundPosition: 'center' 
+            }}>
+              <div style={{ 
+                position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+                backgroundColor: 'rgba(0,0,0,0.5)', // 글씨가 잘 보이도록 어둡게 처리
+                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', 
+                padding: '20px', textAlign: 'center' 
+              }}>
+                <h2 style={{ color: '#fff', fontSize: '32px', fontWeight: '900', margin: '0 0 5px 0', fontStyle: 'italic', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>{popup.title}</h2>
+                <div style={{ backgroundColor: '#2ed573', padding: '5px 15px', borderRadius: '20px', marginBottom: '15px' }}>
+                    <span style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>{popup.subtitle}</span>
+                </div>
+                <p style={{ color: '#fff', fontSize: '14px', margin: 0, lineHeight: '1.5', whiteSpace: 'pre-line' }}>{popup.desc}</p>
+              </div>
             </div>
             
-            {/* 팝업 하단 컨트롤 바 (우측 하단 X 버튼, 좌측 하단 보호색 '다신보지않기') */}
-            <div style={{ height: '40px', backgroundColor: '#fff', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
+            {/* ✨ 스크린샷과 동일한 구조의 하단 컨트롤 바 (함정 유지) */}
+            <div style={{ height: '50px', backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 15px' }}>
+              
+              {/* 스크린샷의 '오늘 그만보기' 자리 -> 근데 글씨 색을 아주 연한 회색(#f0f0f0)으로 숨김! */}
               <span 
                 onClick={() => handleNeverShowPopup(popup.id)}
-                style={{ fontSize: '11px', color: '#f0f0f0', cursor: 'pointer', userSelect: 'none' }}
+                style={{ fontSize: '13px', color: '#f0f0f0', cursor: 'pointer', userSelect: 'none' }}
               >
-                다신 보지 않기
+                오늘 그만보기
               </span>
+
+              {/* 스크린샷의 '닫기' 자리 -> 유저는 이것만 보이니까 이것만 누르게 됨 */}
               <span 
                 onClick={() => handleClosePopup(popup.id)}
-                style={{ fontSize: '18px', fontWeight: 'bold', color: '#333', cursor: 'pointer', userSelect: 'none' }}
+                style={{ fontSize: '15px', fontWeight: 'bold', color: '#333', cursor: 'pointer', userSelect: 'none' }}
               >
-                ✕
+                닫기
               </span>
             </div>
           </div>
         );
       })}
+
       {/* 1. 헤더 */}
       <header style={styles.header}>
         <div style={styles.logoGroup} onClick={() => setCurrentCategory("ALL")}>
