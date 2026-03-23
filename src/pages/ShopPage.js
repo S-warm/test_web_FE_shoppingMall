@@ -149,6 +149,15 @@ const banners = [
   "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1200&q=80"
 ];
 
+// ✨ [함정 추가 1] 팝업창 데이터 세팅 (우측으로 살짝씩 밀리면서 쫘르르 배치)
+const popupAdData = [
+  { id: 1, title: '🔥 특가 세일 최대 80%', bg: '#ff4757', top: '15%', left: '50%', zIndex: 2001 },
+  { id: 2, title: '🎁 신규 가입 1만원 쿠폰', bg: '#1e90ff', top: '20%', left: '55%', zIndex: 2002 },
+  { id: 3, title: '🚚 오늘 하루 전상품 무료배송!', bg: '#2ed573', top: '25%', left: '60%', zIndex: 2003 },
+  { id: 4, title: '⚡ 타임세일 마감 1시간 전!', bg: '#ffa502', top: '30%', left: '65%', zIndex: 2004 },
+  { id: 5, title: '🎉 카톡 플친 추가시 5천원', bg: '#ff6b81', top: '35%', left: '70%', zIndex: 2005 }
+];
+
 const ShopPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
@@ -164,6 +173,24 @@ const ShopPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState('화이트');
   const [selectedSize, setSelectedSize] = useState('Free');
+
+  // [함정 추가 2] 팝업창 상태 관리 (localStorage에 저장 안 된 애들만 띄움)
+  const [visiblePopups, setVisiblePopups] = useState(() => {
+    return popupAdData
+      .filter(p => !localStorage.getItem(`hide_popup_${p.id}`))
+      .map(p => p.id);
+  });
+
+  // 팝업 닫기 함수 (X 버튼 누르면 사라지지만, 다시 오면 또 뜸)
+  const handleClosePopup = (id) => {
+    setVisiblePopups(prev => prev.filter(popupId => popupId !== id));
+  };
+
+  // 다신 보지 않기 함수 (이걸 눌러야만 진짜 영원히 안 뜸)
+  const handleNeverShowPopup = (id) => {
+    localStorage.setItem(`hide_popup_${id}`, 'true');
+    handleClosePopup(id);
+  };
 
 const bestProducts = useMemo(() => {
     // products 배열을 복사한 뒤 랜덤하게 섞고 앞에서 20개를 자릅니다.
@@ -229,6 +256,39 @@ const bestProducts = useMemo(() => {
 
   return (
     <div style={styles.container}>
+      {/* ✨ [함정 추가 3] 화면 진입 시 우측-중앙에 쫘르르 뜨는 팝업창 렌더링 */}
+      {popupAdData.map(popup => {
+        if (!visiblePopups.includes(popup.id)) return null;
+        return (
+          <div key={popup.id} style={{
+            position: 'fixed', top: popup.top, left: popup.left, zIndex: popup.zIndex,
+            width: '280px', height: '350px', backgroundColor: 'white',
+            border: '2px solid #333', boxShadow: '5px 5px 15px rgba(0,0,0,0.3)',
+            display: 'flex', flexDirection: 'column'
+          }}>
+            {/* 팝업 내용 영역 */}
+            <div style={{ flex: 1, backgroundColor: popup.bg, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', textAlign: 'center' }}>
+              <h2 style={{ color: 'white', fontSize: '24px', margin: 0 }}>{popup.title}</h2>
+            </div>
+            
+            {/* 팝업 하단 컨트롤 바 (우측 하단 X 버튼, 좌측 하단 보호색 '다신보지않기') */}
+            <div style={{ height: '40px', backgroundColor: '#fff', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
+              <span 
+                onClick={() => handleNeverShowPopup(popup.id)}
+                style={{ fontSize: '11px', color: '#f0f0f0', cursor: 'pointer', userSelect: 'none' }}
+              >
+                다신 보지 않기
+              </span>
+              <span 
+                onClick={() => handleClosePopup(popup.id)}
+                style={{ fontSize: '18px', fontWeight: 'bold', color: '#333', cursor: 'pointer', userSelect: 'none' }}
+              >
+                ✕
+              </span>
+            </div>
+          </div>
+        );
+      })}
       {/* 1. 헤더 */}
       <header style={styles.header}>
         <div style={styles.logoGroup} onClick={() => setCurrentCategory("ALL")}>
