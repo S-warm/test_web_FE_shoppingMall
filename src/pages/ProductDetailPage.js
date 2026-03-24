@@ -11,7 +11,9 @@ const ProductDetailPage = () => {
   const product = products.find(p => p.id === parseInt(id));
 
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // ✨ [함정] 기존의 isExpanded를 지우고, '현재 열려있는 아코디언 탭'을 추적하는 상태 추가
+  const [activeAccordion, setActiveAccordion] = useState(null);
 
   // 드롭다운 상태
   const [showMainDropdown, setShowMainDropdown] = useState(false);
@@ -29,21 +31,19 @@ const ProductDetailPage = () => {
 
   const topImages = [product.img];
   if (product.hoverImg) topImages.push(product.hoverImg);
-
   const detailImages = product.detailImages || [];
 
   const handleNextImage = () => setCurrentImageIdx((prev) => (prev + 1) % topImages.length);
   const handlePrevImage = () => setCurrentImageIdx((prev) => (prev - 1 + topImages.length) % topImages.length);
 
-  // 색상/사이즈 선택 핸들러
   const handleSelectColor = (e, color) => {
-    e.stopPropagation(); // 클릭 이벤트 전파 방지 (중요)
+    e.stopPropagation(); 
     setSelectedColor(color);
     setOpenColorList(false);
   };
 
   const handleSelectSize = (e, size) => {
-    e.stopPropagation(); // 클릭 이벤트 전파 방지 (중요)
+    e.stopPropagation(); 
     setSelectedSize(size);
     setOpenSizeList(false);
   };
@@ -66,6 +66,11 @@ const ProductDetailPage = () => {
     const optionString = `색상: ${selectedColor} / 사이즈: ${selectedSize}`;
     addToCart(product, quantity, optionString);
     navigate('/payment');
+  };
+
+  // ✨ [함정 로직] 클릭한 탭이 이미 열려있으면 닫고(null), 아니면 해당 탭만 열어줍니다. (다른 탭은 자동 닫힘)
+  const toggleAccordion = (section) => {
+    setActiveAccordion(activeAccordion === section ? null : section);
   };
 
   return (
@@ -103,7 +108,6 @@ const ProductDetailPage = () => {
                 </div>
             </div>
 
-            {/* ✨ [핵심 수정] 드롭다운이 열리면 zIndex를 2000으로 높여서 오버레이 위로 올라오게 함 */}
             <div style={{...styles.infoCol, zIndex: showMainDropdown ? 2000 : 20}}>
                 <div style={styles.headerGroup}>
                     <h2 style={styles.productTitle}>{product.name}</h2>
@@ -127,7 +131,6 @@ const ProductDetailPage = () => {
                     <div style={styles.tableRow}><span style={styles.th}>배송비</span><div style={styles.td}><strong>무료배송</strong></div></div>
                 </div>
 
-                {/* 옵션 선택 구역 */}
                 <div style={styles.optionDropdownArea}>
                     <div style={styles.selectorTrigger} onClick={() => setShowMainDropdown(!showMainDropdown)}>
                         <span style={{fontWeight: 'bold', color: (selectedColor && selectedSize) ? '#1a1a1a' : '#888'}}>
@@ -140,12 +143,11 @@ const ProductDetailPage = () => {
                     
                     {showMainDropdown && (
                         <div style={styles.dropdownContent}>
-                            {/* (A) 색상 선택 */}
                             <div style={styles.customSelectGroup}>
                                 <div style={styles.selectLabel}>색상</div>
                                 <div style={styles.customSelectBox} 
                                      onClick={(e) => {
-                                         e.stopPropagation(); // 부모 클릭 방지
+                                         e.stopPropagation(); 
                                          setOpenColorList(!openColorList); 
                                          setOpenSizeList(false);
                                      }}>
@@ -157,15 +159,12 @@ const ProductDetailPage = () => {
                                 {openColorList && (
                                     <ul style={styles.customOptionsList}>
                                         {colorOptions.map((color, idx) => (
-                                            <li key={idx} style={styles.customOption} onClick={(e) => handleSelectColor(e, color)}>
-                                                {color}
-                                            </li>
+                                            <li key={idx} style={styles.customOption} onClick={(e) => handleSelectColor(e, color)}>{color}</li>
                                         ))}
                                     </ul>
                                 )}
                             </div>
 
-                            {/* (B) 사이즈 선택 */}
                             <div style={styles.customSelectGroup}>
                                 <div style={styles.selectLabel}>사이즈</div>
                                 <div style={styles.customSelectBox} 
@@ -182,9 +181,7 @@ const ProductDetailPage = () => {
                                 {openSizeList && (
                                     <ul style={styles.customOptionsList}>
                                         {sizeOptions.map((size, idx) => (
-                                            <li key={idx} style={styles.customOption} onClick={(e) => handleSelectSize(e, size)}>
-                                                {size}
-                                            </li>
+                                            <li key={idx} style={styles.customOption} onClick={(e) => handleSelectSize(e, size)}>{size}</li>
                                         ))}
                                     </ul>
                                 )}
@@ -214,53 +211,107 @@ const ProductDetailPage = () => {
             </div>
         </div>
 
+        {/* ✨ [함정 UI] 숨바꼭질 아코디언 피로도 존 */}
         <div style={styles.detailSection}>
-            <div style={styles.detailImageContainer}>
-                {detailImages.length > 0 ? (
-                    <>
-                        <img src={detailImages[0]} style={styles.detailImgFull} alt="detail_1" />
-                        {isExpanded && detailImages.slice(1).map((img, idx) => (
-                            <img key={idx} src={img} style={styles.detailImgFull} alt={`detail_more_${idx}`} />
-                        ))}
-                        {detailImages.length > 1 && (
-                            <button style={styles.moreBtn} onClick={() => setIsExpanded(!isExpanded)}>
-                                {isExpanded ? '상품 정보 접기 ∧' : '상품 정보 더보기 ∨'}
-                            </button>
+            <h3 style={{fontSize: '20px', fontWeight: 'bold', borderBottom: '2px solid #1a1a1a', paddingBottom: '15px', marginBottom: '20px'}}>
+                상품 상세 정보
+            </h3>
+
+            {/* 1. 상품 상세 이미지 아코디언 */}
+            <div style={styles.accordionWrapper}>
+                <div style={styles.accordionHeader} onClick={() => toggleAccordion('images')}>
+                    <span>[+] 상품 상세 이미지 보기</span>
+                    <span>{activeAccordion === 'images' ? '▲' : '▼'}</span>
+                </div>
+                {activeAccordion === 'images' && (
+                    <div style={styles.accordionContent}>
+                        {detailImages.length > 0 ? (
+                            detailImages.map((img, idx) => (
+                                <img key={idx} src={img} style={styles.detailImgFull} alt={`detail_${idx}`} />
+                            ))
+                        ) : (
+                            <img src={product.img} style={styles.detailImgFull} alt="default_detail" />
                         )}
-                    </>
-                ) : (
-                    <img src={product.img} style={styles.detailImgFull} alt="default_detail" />
+                    </div>
                 )}
             </div>
 
-            <div style={styles.tableGroup}>
-                <h3 style={styles.tableTitle}>상품정보</h3>
-                <table style={styles.detailTable}>
-                    <tbody>
-                        <tr><th style={styles.detailTh}>제품 소재</th><td style={styles.detailTd}>WOOL 100%</td></tr>
-                        <tr><th style={styles.detailTh}>색상</th><td style={styles.detailTd}>블랙, 레드, 아이보리, 그레이, 베이지, 오트밀</td></tr>
-                        <tr><th style={styles.detailTh}>치수</th><td style={styles.detailTd}>어깨 36.5 / 가슴 49 / 소매 59 / 총장 60 (상세참조)</td></tr>
-                        <tr><th style={styles.detailTh}>제조자</th><td style={styles.detailTd}>(주)SWARM Corp.</td></tr>
-                        <tr><th style={styles.detailTh}>제조국</th><td style={styles.detailTd}>대한민국</td></tr>
-                        <tr><th style={styles.detailTh}>세탁방법</th><td style={styles.detailTd}>드라이클리닝 권장</td></tr>
-                        <tr><th style={styles.detailTh}>제조연월</th><td style={styles.detailTd}>2026.01</td></tr>
-                        <tr><th style={styles.detailTh}>품질보증기준</th><td style={styles.detailTd}>관련 법 및 소비자 분쟁해결 규정에 따름</td></tr>
-                        <tr><th style={styles.detailTh}>A/S 책임자</th><td style={styles.detailTd}>SWARM 고객센터 1588-0000</td></tr>
-                    </tbody>
-                </table>
+            {/* 2. 사이즈 표 아코디언 */}
+            <div style={styles.accordionWrapper}>
+                <div style={styles.accordionHeader} onClick={() => toggleAccordion('size')}>
+                    <span>[+] 실측 사이즈 표 확인하기</span>
+                    <span>{activeAccordion === 'size' ? '▲' : '▼'}</span>
+                </div>
+                {activeAccordion === 'size' && (
+                    <div style={styles.accordionContent}>
+                        <table style={styles.detailTable}>
+                            <tbody>
+                                <tr><th style={styles.detailTh}>사이즈</th><th style={styles.detailTh}>총장</th><th style={styles.detailTh}>어깨너비</th><th style={styles.detailTh}>가슴단면</th><th style={styles.detailTh}>소매길이</th></tr>
+                                <tr><td style={styles.detailTd}>S</td><td style={styles.detailTd}>68</td><td style={styles.detailTd}>45</td><td style={styles.detailTd}>52</td><td style={styles.detailTd}>60</td></tr>
+                                <tr><td style={styles.detailTd}>M</td><td style={styles.detailTd}>70</td><td style={styles.detailTd}>47</td><td style={styles.detailTd}>54</td><td style={styles.detailTd}>61</td></tr>
+                                <tr><td style={styles.detailTd}>L</td><td style={styles.detailTd}>72</td><td style={styles.detailTd}>49</td><td style={styles.detailTd}>56</td><td style={styles.detailTd}>62</td></tr>
+                                <tr><td style={styles.detailTd}>XL</td><td style={styles.detailTd}>74</td><td style={styles.detailTd}>51</td><td style={styles.detailTd}>58</td><td style={styles.detailTd}>63</td></tr>
+                            </tbody>
+                        </table>
+                        <p style={{fontSize:'12px', color:'#888', marginTop:'10px'}}>* 사이즈는 측정 방법에 따라 1~3cm 오차가 있을 수 있습니다.</p>
+                    </div>
+                )}
             </div>
 
-            <div style={styles.tableGroup}>
-                <h3 style={styles.tableTitle}>판매자정보</h3>
-                <table style={styles.detailTable}>
-                    <tbody>
-                        <tr><th style={styles.detailTh}>상호명</th><td style={styles.detailTd}>(주)SWARM</td></tr>
-                        <tr><th style={styles.detailTh}>사업자등록번호</th><td style={styles.detailTd}>123-45-67890</td></tr>
-                        <tr><th style={styles.detailTh}>통신판매업번호</th><td style={styles.detailTd}>2026-서울강남-0000</td></tr>
-                        <tr><th style={styles.detailTh}>대표자</th><td style={styles.detailTd}>김스웜</td></tr>
-                        <tr><th style={styles.detailTh}>사업장 소재지</th><td style={styles.detailTd}>서울특별시 강남구 테헤란로 123 스웜타워 8층</td></tr>
-                    </tbody>
-                </table>
+            {/* 3. 소재 및 혼용률 아코디언 */}
+            <div style={styles.accordionWrapper}>
+                <div style={styles.accordionHeader} onClick={() => toggleAccordion('material')}>
+                    <span>[+] 혼용률 및 세탁 방법</span>
+                    <span>{activeAccordion === 'material' ? '▲' : '▼'}</span>
+                </div>
+                {activeAccordion === 'material' && (
+                    <div style={styles.accordionContent}>
+                        <table style={styles.detailTable}>
+                            <tbody>
+                                <tr><th style={styles.detailTh}>제품 소재</th><td style={styles.detailTd}>WOOL 100%</td></tr>
+                                <tr><th style={styles.detailTh}>세탁방법</th><td style={styles.detailTd}>드라이클리닝 권장 / 기계 건조기 사용 금지</td></tr>
+                                <tr><th style={styles.detailTh}>제조국</th><td style={styles.detailTd}>대한민국</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+
+            {/* 4. 배송 및 환불 규정 아코디언 */}
+            <div style={styles.accordionWrapper}>
+                <div style={styles.accordionHeader} onClick={() => toggleAccordion('policy')}>
+                    <span>[+] 배송 및 환불 규정</span>
+                    <span>{activeAccordion === 'policy' ? '▲' : '▼'}</span>
+                </div>
+                {activeAccordion === 'policy' && (
+                    <div style={styles.accordionContent}>
+                        <p style={{fontSize:'13px', lineHeight:'1.8', color:'#555'}}>
+                            - 배송은 영업일 기준 3~5일 소요됩니다.<br/>
+                            - 상품 수령 후 7일 이내에 교환/반품 접수가 가능합니다.<br/>
+                            - 단순 변심에 의한 반품 시 왕복 배송비 6,000원은 고객님 부담입니다.<br/>
+                            - 상품 택(Tag) 제거 또는 훼손 시 교환/환불이 불가합니다.
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* 5. 판매자 정보 아코디언 */}
+            <div style={styles.accordionWrapper}>
+                <div style={styles.accordionHeader} onClick={() => toggleAccordion('seller')}>
+                    <span>[+] 판매자 및 A/S 정보</span>
+                    <span>{activeAccordion === 'seller' ? '▲' : '▼'}</span>
+                </div>
+                {activeAccordion === 'seller' && (
+                    <div style={styles.accordionContent}>
+                        <table style={styles.detailTable}>
+                            <tbody>
+                                <tr><th style={styles.detailTh}>상호명</th><td style={styles.detailTd}>(주)SWARM</td></tr>
+                                <tr><th style={styles.detailTh}>사업자등록번호</th><td style={styles.detailTd}>123-45-67890</td></tr>
+                                <tr><th style={styles.detailTh}>A/S 책임자</th><td style={styles.detailTd}>SWARM 고객센터 1588-0000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
       </div>
@@ -271,6 +322,7 @@ const ProductDetailPage = () => {
 };
 
 const styles = {
+  // 기존 스타일 유지
   container: { backgroundColor: 'white', minHeight: '100vh', fontFamily: '"Pretendard", sans-serif', color: '#1a1a1a' },
   nav: { borderBottom: '1px solid #e5e5e5', position: 'sticky', top: 0, background: 'white', zIndex: 50 },
   navInner: { maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 20px' },
@@ -287,9 +339,7 @@ const styles = {
   indicatorContainer: { position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '10px', zIndex: 10 },
   indicatorDot: { width: '10px', height: '10px', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.3s' },
 
-  // ✨ infoCol 스타일: zIndex는 JSX에서 동적으로 처리됨
   infoCol: { flex: '1 1 400px', maxWidth: '500px', position: 'sticky', top: '80px' },
-  
   headerGroup: { display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'10px' },
   productTitle: { fontSize: '24px', fontWeight: '400', margin: 0, lineHeight: '1.4' },
   iconGroup: { display:'flex', gap:'15px' },
@@ -329,19 +379,19 @@ const styles = {
   btnGroup: { display: 'flex', gap: '8px' },
   cartBtn: { flex: 1, padding: '18px', background: 'white', border: '1px solid #1a1a1a', color: '#1a1a1a', fontWeight: 'bold', cursor: 'pointer', fontSize:'15px' },
   buyBtn: { flex: 1, padding: '18px', background: '#1a1a1a', border: '1px solid #1a1a1a', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize:'15px' },
-  
-  // 투명 오버레이: zIndex 999 (이것보다 infoCol zIndex가 높아야 함)
   transparentOverlay: { position:'fixed', top:0, left:0, right:0, bottom:0, zIndex: 999, cursor:'default' },
 
-  detailSection: { borderTop:'2px solid #1a1a1a', paddingTop:'60px', paddingBottom: '100px' },
-  tableGroup: { marginBottom: '60px' },
-  tableTitle: { fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #000', paddingBottom: '15px', marginBottom: '0' },
-  detailTable: { width: '100%', borderCollapse: 'collapse', fontSize: '13px', color: '#555' },
-  detailTh: { width: '200px', backgroundColor: '#f9f9f9', padding: '15px 20px', borderBottom: '1px solid #eee', textAlign: 'left', fontWeight: 'normal', color: '#333' },
-  detailTd: { padding: '15px 20px', borderBottom: '1px solid #eee' },
-  detailImageContainer: { display: 'flex', flexDirection: 'column', marginBottom: '60px', width: '100%' },
+  detailSection: { borderTop:'2px solid #1a1a1a', paddingTop:'40px', paddingBottom: '100px', maxWidth: '800px', margin: '0 auto' },
+  
+  // ✨ [함정 스타일] 아코디언 스타일 추가
+  accordionWrapper: { borderBottom: '1px solid #e1e1e1', marginBottom: '5px' },
+  accordionHeader: { display: 'flex', justifyContent: 'space-between', padding: '18px 10px', backgroundColor: '#f9f9f9', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', transition: 'background 0.2s' },
+  accordionContent: { padding: '20px 10px', backgroundColor: 'white', animation: 'fadeIn 0.3s ease-in-out' },
+
+  detailTable: { width: '100%', borderCollapse: 'collapse', fontSize: '13px', color: '#555', textAlign: 'center' },
+  detailTh: { backgroundColor: '#f9f9f9', padding: '12px', borderBottom: '1px solid #eee', fontWeight: 'bold', color: '#333' },
+  detailTd: { padding: '12px', borderBottom: '1px solid #eee' },
   detailImgFull: { width: '100%', height: 'auto', display: 'block', marginBottom: '0px' },
-  moreBtn: { width: '100%', padding: '15px 0', marginTop: '20px', backgroundColor: 'white', border: '1px solid #ddd', color: '#333', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.3s' }
 };
 
 export default ProductDetailPage;

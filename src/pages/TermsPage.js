@@ -1,9 +1,13 @@
 // src/pages/TermsPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const TermsPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    sessionStorage.setItem('hasViewedTerms', 'true');
+  }, []);
   
   // 체크박스 상태 관리
   const [agreements, setAgreements] = useState({
@@ -82,8 +86,8 @@ const TermsPage = () => {
         <div style={styles.allCheckArea} onClick={handleAllCheck}>
           <div style={{
             ...styles.checkboxIcon, 
-            backgroundColor: agreements.all ? '#007bff' : 'white', // ✨ 파란색으로 변경
-            borderColor: agreements.all ? '#007bff' : '#ccc'       // ✨ 파란색으로 변경
+            backgroundColor: agreements.all ? '#007bff' : 'white', 
+            borderColor: agreements.all ? '#007bff' : '#ccc'       
           }}>
             {agreements.all && <span style={{color:'white'}}>✔</span>}
           </div>
@@ -106,7 +110,6 @@ const TermsPage = () => {
              <div style={{...styles.checkboxIcon, backgroundColor: agreements.term1 ? '#007bff' : 'white'}}>
                {agreements.term1 && <span style={{color:'white'}}>✔</span>}
              </div>
-             {/* ✨ [필수] 글자색 파란색으로 변경 */}
              <span style={{color: '#007bff', marginRight: '5px', fontSize:'14px'}}>[필수]</span>
              <span style={{color: '#333', fontSize:'14px'}}>서비스 이용약관</span>
           </div>
@@ -148,17 +151,25 @@ const TermsPage = () => {
           <span style={styles.viewLink} onClick={() => openModal('term4')}>보기 &gt;</span>
         </div>
 
-        {/* 다음 버튼 (파란색) */}
+        {/* 다음 버튼 */}
         <button 
           onClick={handleNext}
           style={{
             ...styles.nextBtn,
-            backgroundColor: agreements.term1 ? '#007bff' : '#eee', // ✨ 활성 시 파란색
+            backgroundColor: agreements.term1 ? '#007bff' : '#eee',
             color: agreements.term1 ? 'white' : '#aaa',
             cursor: agreements.term1 ? 'pointer' : 'default'
           }}
         >
-          다음
+          다음 단계로
+        </button>
+
+        {/* ✨ [함정 UI] 폼 초기화 멘탈 붕괴 버튼 */}
+        <button 
+          onClick={() => navigate(-1)} 
+          style={styles.backBtn}
+        >
+          ← 작성 중이던 화면으로 돌아가기
         </button>
 
       </div>
@@ -173,7 +184,6 @@ const TermsPage = () => {
             <div style={styles.modalText}>
               {modalContent.text}
             </div>
-            {/* ✨ 닫기/확인 버튼도 파란색 */}
             <button onClick={() => setShowModal(false)} style={styles.closeBtn}>
               확인
             </button>
@@ -192,63 +202,41 @@ const styles = {
     display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '50px',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif'
   },
-  pageTitle: {
-    fontSize: '32px', color: '#333', marginBottom: '20px', fontWeight: 'bold'
-  },
+  pageTitle: { fontSize: '32px', color: '#333', marginBottom: '20px', fontWeight: 'bold' },
   card: {
-    width: '460px',
-    backgroundColor: 'white',
-    padding: '30px 20px',
-    borderRadius: '6px',
-    border: '1px solid #ddd',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-    boxSizing: 'border-box'
+    width: '460px', backgroundColor: 'white', padding: '30px 20px', borderRadius: '6px',
+    border: '1px solid #ddd', boxShadow: '0 2px 6px rgba(0,0,0,0.05)', boxSizing: 'border-box'
   },
-  allCheckArea: {
-    display: 'flex', alignItems: 'flex-start', cursor: 'pointer', marginBottom: '10px'
-  },
+  allCheckArea: { display: 'flex', alignItems: 'flex-start', cursor: 'pointer', marginBottom: '10px' },
   checkboxIcon: {
-    width: '22px', height: '22px', borderRadius: '50%',
-    border: '1px solid #ccc',
+    width: '22px', height: '22px', borderRadius: '50%', border: '1px solid #ccc',
     display: 'flex', justifyContent: 'center', alignItems: 'center',
     marginRight: '12px', fontSize: '12px', flexShrink: 0
   },
-  divider: {
-    height: '1px', backgroundColor: '#eee', margin: '20px 0'
-  },
-  row: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px'
-  },
-  checkGroup: {
-    display: 'flex', alignItems: 'center', cursor: 'pointer'
-  },
-  viewLink: {
-    fontSize: '13px', color: '#888', textDecoration: 'underline', cursor: 'pointer'
-  },
+  divider: { height: '1px', backgroundColor: '#eee', margin: '20px 0' },
+  row: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' },
+  checkGroup: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
+  viewLink: { fontSize: '13px', color: '#888', textDecoration: 'underline', cursor: 'pointer' },
   nextBtn: {
     width: '100%', padding: '15px', border: 'none', borderRadius: '5px',
     fontSize: '18px', fontWeight: 'bold', marginTop: '30px'
   },
+  // ✨ 돌아가기 버튼 스타일 추가
+  backBtn: {
+    width: '100%', padding: '15px', backgroundColor: 'white', color: '#666', 
+    border: '1px solid #ddd', borderRadius: '5px', fontSize: '15px', fontWeight: 'bold', 
+    marginTop: '10px', cursor: 'pointer', transition: 'background 0.2s'
+  },
   modalOverlay: {
-    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex', justifyContent: 'center', alignItems: 'center',
-    zIndex: 9999
+    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999
   },
-  modalBox: {
-    width: '320px', backgroundColor: 'white', padding: '20px', borderRadius: '8px',
-    boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
-  },
+  modalBox: { width: '320px', backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 5px 15px rgba(0,0,0,0.3)' },
   modalText: {
-    fontSize: '13px', lineHeight: '1.5', color: '#555',
-    height: '150px', overflowY: 'auto',
-    backgroundColor: '#f8f9fa', padding: '10px', marginBottom: '15px',
-    whiteSpace: 'pre-wrap', border: '1px solid #eee'
+    fontSize: '13px', lineHeight: '1.5', color: '#555', height: '150px', overflowY: 'auto',
+    backgroundColor: '#f8f9fa', padding: '10px', marginBottom: '15px', whiteSpace: 'pre-wrap', border: '1px solid #eee'
   },
-  closeBtn: {
-    width: '100%', padding: '10px', backgroundColor: '#007bff', // ✨ 파란색 버튼
-    color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
-  }
+  closeBtn: { width: '100%', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }
 };
 
 export default TermsPage;

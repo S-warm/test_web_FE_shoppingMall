@@ -1,6 +1,7 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import CSDummyPage from './pages/CSDummyPage';
 
 // Context들
 import { TimerProvider } from './context/TimerContext';
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/cs/:type" element={<CSDummyPage />} />
               </Routes>
             </AutoLogger>
             
