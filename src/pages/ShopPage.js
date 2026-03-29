@@ -191,7 +191,7 @@ const ShopPage = () => {
       {/* ✨ [수정 완료] 좌측 하단 복사 금지 쿠폰 (X 버튼 추가됨) */}
       {showSecretCoupon && (
         <div style={{
-          position: 'fixed', bottom: '30px', left: '30px', zIndex: 1000,
+          position: 'fixed', bottom: '75px', left: '30px', zIndex: 1000,
           backgroundColor: '#333', color: 'white', padding: '20px', borderRadius: '8px',
           boxShadow: '0 4px 10px rgba(0,0,0,0.3)', width: '220px'
         }}>

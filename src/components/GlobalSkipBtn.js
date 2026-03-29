@@ -23,6 +23,10 @@ const GlobalSkipBtn = () => {
     const currentPath = location.pathname;
     skipCurrentPage();
 
+sessionStorage.setItem('isSkipNavigation', 'true');
+
+
+
     // 1️⃣ 로그인 페이지 -> 회원가입으로
     if (currentPath === '/login') {
   alert("⏭ 단계 건너뛰기: 회원가입 페이지로 이동합니다.");

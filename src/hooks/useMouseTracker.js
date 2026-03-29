@@ -115,17 +115,21 @@ export const useMouseTracker = () => {
     // IDLE_TIME_MS 동안 아무 조작이 없으면 IDLE_TIME 이슈 기록
     // ================================================================
     const resetIdleTimer = () => {
-      if (currentMouseData.idleTimer) clearTimeout(currentMouseData.idleTimer);
-      currentMouseData.idleTimer = setTimeout(() => {
-        sharedTrackData.current.idleCount += 1;
-        
-        logIssue('IDLE_TIME', '사용성', '인지 과부하', 'LOW', {
-          scroll_y: window.scrollY,
-          standard: 'Nielsen #1 (시스템 상태 가시성)',
-          detail: `${std.INTERACTION.IDLE_TIME_MS / 1000}초간 마우스/스크롤 조작 없음 (${std.tier} 기준). 다음 행동을 찾지 못해 멈춘 것으로 판단`
-        });
-      }, std.INTERACTION.IDLE_TIME_MS);
-    };
+  if (currentMouseData.idleTimer) clearTimeout(currentMouseData.idleTimer);
+  currentMouseData.idleTimer = setTimeout(() => {
+
+    // 페이지당 1회만 찍히게 제한
+    if (sharedTrackData.current.idleLogged) return;
+    sharedTrackData.current.idleLogged = true;
+
+    sharedTrackData.current.idleCount += 1;
+    logIssue('IDLE_TIME', '사용성', '인지 과부하', 'LOW', {
+      scroll_y: window.scrollY,
+      standard: 'Nielsen #1 (시스템 상태 가시성)',
+      detail: `${std.INTERACTION.IDLE_TIME_MS / 1000}초간 조작 없음 (${std.tier} 기준) - 이 페이지에서 ${sharedTrackData.current.idleCount}번째 멈춤`
+    });
+  }, std.INTERACTION.IDLE_TIME_MS);
+};
 
     // ================================================================
     // [항목 1, 2, 4, 6] 전역 클릭 이벤트 핸들러
@@ -299,6 +303,9 @@ export const useMouseTracker = () => {
         );
 
         if (isHijackable) {
+          if (sharedTrackData.current.scrollHijackLogged) return;
+          sharedTrackData.current.scrollHijackLogged = true;
+
           logIssue('SCROLL_HIJACKING', '사용성', '통제권 납치', 'MEDIUM', {
             target_html: scrollTarget.outerHTML?.substring(0, 100) || null,
             coord_x: null,

@@ -12,7 +12,8 @@ import { GlobalLogProvider } from './context/GlobalLogProvider';
 // AutoLogger 임포트 삭제됨
 import { LogTrackers } from './components/LogTrackers'; 
 import GlobalSkipBtn from './components/GlobalSkipBtn';    
-import GlobalRestartBtn from './components/GlobalRestartBtn'; 
+import GlobalRestartBtn from './components/GlobalRestartBtn';
+import GlobalAbandonBtn from './components/GlobalAbandonBtn';
 
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -32,6 +33,7 @@ function App() {
               
               <GlobalRestartBtn />
               <GlobalSkipBtn />
+              <GlobalAbandonBtn />
               <LogTrackers />
               
               {/* AutoLogger 태그가 완전히 제거되고 Routes만 남음 */}
