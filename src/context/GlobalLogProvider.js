@@ -1,5 +1,6 @@
 // src/context/GlobalLogProvider.js
 import React, { createContext, useRef, useEffect, useCallback } from 'react';
+import { saveLogToDB } from '../utils/saveLogToDB';
 
 export const GlobalLogContext = createContext();
 
@@ -20,6 +21,7 @@ export const GlobalLogProvider = ({ children }) => {
     idleCount: 0,
     idleLogged: false,           // IDLE_TIME 페이지당 1회 제한용
     scrollHijackLogged: false,   // SCROLL_HIJACKING 페이지당 1회 제한용
+    hasSkipped: false,
   });
 
   const skipCurrentPage = useCallback(() => {
@@ -134,17 +136,9 @@ export const GlobalLogProvider = ({ children }) => {
       sessionLog.current.is_success = true;
     };
 
+  
     const handleBeforeUnload = () => {
-      const startTime =
-        parseInt(sessionStorage.getItem('session_start_time'), 10) ||
-        (localStorage.getItem('testStartTime')
-          ? new Date(localStorage.getItem('testStartTime')).getTime()
-          : Date.now());
-
-      sessionLog.current.duration_ms = Date.now() - startTime;
-
-      console.warn('===== [세션 종료] 최종 산출된 JSON 로그 =====');
-      console.log(JSON.stringify(sessionLog.current, null, 2));
+      saveLogToDB(sessionLog.current);
     };
 
     window.addEventListener('test_success', handleSuccessEvent);

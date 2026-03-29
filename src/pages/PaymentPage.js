@@ -59,6 +59,7 @@ const PaymentPage = () => {
 
   // PaymentPage.js - handlePayment 함수 수정
 const handlePayment = async () => {
+  
     if (totalProductPrice === 0) {
       alert("결제할 상품이 없습니다. 장바구니를 확인해주세요.");
       return;
@@ -72,12 +73,13 @@ const handlePayment = async () => {
       return;
     }
 
-    // ── 테스트 성공 이벤트 발생 → GlobalLogProvider가 is_success를 true로 변경 ──
-    window.dispatchEvent(new Event('test_success'));
 
    // ── 로그 DB 저장 ──────────────────────────────────────────────
 if (window.__log) {
-  window.__log.current.is_success = true;
+  const hasSkipped = window.__log.current.pages.some(
+    p => p.issues.some(i => i.issue_type === 'PAGE_SKIPPED')
+  );
+  window.__log.current.is_success = !hasSkipped;
   await saveLogToDB(window.__log.current);
 }
     // ──────────────────────────────────────────────────────────────
@@ -96,12 +98,14 @@ if (window.__log) {
         });
 
         alert(`[결제 완료]\n실험이 종료되었습니다.\n(소요시간: ${timeResult ? timeResult.formatted : '측정불가'})`);
+        sessionStorage.removeItem('hasViewedTerms');
         clearCart();
         navigate('/');
 
     } catch (e) {
         console.error(e);
         alert("결제 처리는 완료되었습니다.");
+        sessionStorage.removeItem('hasViewedTerms');
         clearCart();
         navigate('/');
     }

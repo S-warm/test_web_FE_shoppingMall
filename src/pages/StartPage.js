@@ -75,6 +75,7 @@ try {
 
     
     // 타이머 시작 및 로그인 페이지로 이동
+    sessionStorage.removeItem('hasViewedTerms');
     startTimer();
     navigate('/login');
   };

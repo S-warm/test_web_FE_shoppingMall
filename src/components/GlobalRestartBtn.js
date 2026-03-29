@@ -37,6 +37,7 @@ const GlobalRestartBtn = () => {
       }).catch(() => {});
 
       // ── 5. 시작 페이지로 이동 ────────────────────────────────
+      sessionStorage.removeItem('hasViewedTerms');
       navigate('/');
     }
   };

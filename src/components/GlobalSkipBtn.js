@@ -5,6 +5,7 @@ import { GlobalLogContext } from '../context/GlobalLogProvider';
 import { UserContext } from '../context/UserContext';
 import { CartContext } from '../context/CartContext';
 import { TimerContext } from '../context/TimerContext';
+import { saveLogToDB } from '../utils/saveLogToDB';
 
 const GlobalSkipBtn = () => {
   const location = useLocation();
@@ -14,7 +15,7 @@ const GlobalSkipBtn = () => {
   const { user } = useContext(UserContext);
   const { clearCart } = useContext(CartContext);
   const { endTimer } = useContext(TimerContext);
-  const { skipCurrentPage } = useContext(GlobalLogContext);
+  const { skipCurrentPage, resetLog } = useContext(GlobalLogContext);
 
   // 시작 페이지('/')에서는 버튼을 보여주지 않음 (시작 버튼을 눌러야 하니까)
   if (location.pathname === '/') return null;
@@ -56,6 +57,14 @@ sessionStorage.setItem('isSkipNavigation', 'true');
         timeLogStr = `${timeResult.formatted} (${timeResult.durationSeconds}초)`;
     }
 
+    // ── 로그 DB 저장 추가 ──────────────────────────────────────
+  if (window.__log) {
+    window.__log.current.is_success = false; // 스킵으로 완료했으니 성공으로 처리
+    await saveLogToDB(window.__log.current);
+  }
+  // ──────────────────────────────────────────────────────────
+
+
     try {
         // 서버로 로그 전송 (SKIP_COMPLETE로 구분)
         await axios.post('http://localhost:8080/api/log', {
@@ -66,12 +75,16 @@ sessionStorage.setItem('isSkipNavigation', 'true');
 
         alert(`[실험 종료]\n건너뛰기를 통해 가상 결제가 완료되었습니다.\n소요시간: ${timeResult ? timeResult.formatted : '측정불가'}`);
         
+        sessionStorage.removeItem('hasViewedTerms');
         // 정리하고 처음으로
+        resetLog();
         clearCart();
         navigate('/');
 
     } catch (e) {
         console.error("로그 전송 실패", e);
+        sessionStorage.removeItem('hasViewedTerms');
+        resetLog();
         clearCart();
         navigate('/');
     }
