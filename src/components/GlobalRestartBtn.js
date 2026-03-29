@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
-import { TimerContext } from '../context/TimerContext';
 import { UserContext } from '../context/UserContext';
 
 const GlobalRestartBtn = () => {

@@ -103,16 +103,20 @@ const SignupPage = () => {
   return (
     <div style={styles.container}>
       
-      {fleetingError && (
-        <div style={{ 
-          position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', 
-          backgroundColor: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb', 
-          padding: '15px 30px', borderRadius: '3px', fontWeight: 'bold', 
-          zIndex: 9999, boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontSize: '14px'
-        }}>
-          ⚠️ {fleetingError}
-        </div>
-      )}
+
+{fleetingError && (
+  <div
+    className="error-message"
+    style={{ 
+      position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', 
+      backgroundColor: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb', 
+      padding: '15px 30px', borderRadius: '3px', fontWeight: 'bold', 
+      zIndex: 9999, boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontSize: '14px'
+    }}
+  >
+    ⚠️ {fleetingError}
+  </div>
+)}
 
       <style>
         {`
@@ -130,34 +134,34 @@ const SignupPage = () => {
 
         <label style={styles.label}>아이디</label>
         <div style={styles.row}>
-          <input type="text" placeholder="아이디 입력 (6~20자)" style={styles.input} tabIndex="-1" value={username} onChange={(e) => { setUsername(e.target.value); setIsChecked(false); }} />
+          <input id="username" type="text" placeholder="아이디 입력 (6~20자)" style={styles.input} tabIndex="-1" value={username} onChange={(e) => { setUsername(e.target.value); setIsChecked(false); }} />
           <button style={styles.checkBtn} tabIndex="-1" onClick={handleCheckDuplicate}>중복 확인</button>
         </div>
 
         <label style={styles.label}>비밀번호</label>
-        <input type="password" className="bad-placeholder" placeholder="비밀번호 입력 (대문자, 특수문자, 숫자 혼합 8자 이상)" tabIndex="-1" style={{ ...styles.fullInput, border: passwordError ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} value={password} onChange={(e) => { setPassword(e.target.value); if(passwordError) setPasswordError(''); }} onBlur={() => { const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; if (password && !passwordRegex.test(password)) { setPasswordError("대문자와 특수문자를 혼합하여 8자 이상 입력해주세요."); } }} />
+        <input id="password"  type="password" className="bad-placeholder" placeholder="비밀번호 입력 (대문자, 특수문자, 숫자 혼합 8자 이상)" tabIndex="-1" style={{ ...styles.fullInput, border: passwordError ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} value={password} onChange={(e) => { setPassword(e.target.value); if(passwordError) setPasswordError(''); }} onBlur={() => { const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; if (password && !passwordRegex.test(password)) { setPasswordError("대문자와 특수문자를 혼합하여 8자 이상 입력해주세요."); } }} />
         <p className="drag-hint">* 대문자, 특수문자, 숫자 혼합 8자 이상</p>
         {passwordError && <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>{passwordError}</p>}
         
         <label style={styles.label}>비밀번호 확인</label>
-        <input type="password" placeholder="비밀번호 재입력" tabIndex="-1" value={passwordCheck} style={{ ...styles.fullInput, border: isMismatch ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} onChange={(e) => setPasswordCheck(e.target.value)} />
+        <input id="password-check"  type="password" placeholder="비밀번호 재입력" tabIndex="-1" value={passwordCheck} style={{ ...styles.fullInput, border: isMismatch ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} onChange={(e) => setPasswordCheck(e.target.value)} />
         {isMismatch && <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>비밀번호가 일치하지 않습니다!</p>}
 
         <label style={styles.label}>이름</label>
-        <input type="text" placeholder="이름을 입력해주세요" tabIndex="-1" value={name} style={styles.fullInput} onChange={(e) => setName(e.target.value)} />
+        <input  id="name" type="text" placeholder="이름을 입력해주세요" tabIndex="-1" value={name} style={styles.fullInput} onChange={(e) => setName(e.target.value)} />
 
         <label style={styles.label}>전화번호</label>
-        <input type="text" className="bad-placeholder" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" tabIndex="-1" value={phone} style={styles.fullInput} onChange={(e) => setPhone(e.target.value)} />
+        <input id="phone"  type="text" className="bad-placeholder" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" tabIndex="-1" value={phone} style={styles.fullInput} onChange={(e) => setPhone(e.target.value)} />
         <p className="drag-hint">* '-' 제외 11자리 입력</p>
 
         <label style={styles.label}>주소</label>
-        <input type="text" placeholder="시/구/동 등 주소를 입력해주세요" tabIndex="-1" value={address} style={styles.fullInput} onChange={(e) => setAddress(e.target.value)} />
+        <input id="address"  type="text" placeholder="시/구/동 등 주소를 입력해주세요" tabIndex="-1" value={address} style={styles.fullInput} onChange={(e) => setAddress(e.target.value)} />
 
         <label style={styles.label}>이메일 주소</label>
         <div style={styles.row}>
-          <input type="text" placeholder="이메일 아이디" tabIndex="-1" style={styles.input} value={emailPrefix} onChange={(e) => { setEmailPrefix(e.target.value); if (/[^a-zA-Z0-9._-]/.test(e.target.value)) { setEmailError('올바른 이메일 형식이 아닙니다. (영문, 숫자, ., _, - 만 가능)'); } else { setEmailError(''); } }} />
+          <input id="email-prefix"  type="text" placeholder="이메일 아이디" tabIndex="-1" style={styles.input} value={emailPrefix} onChange={(e) => { setEmailPrefix(e.target.value); if (/[^a-zA-Z0-9._-]/.test(e.target.value)) { setEmailError('올바른 이메일 형식이 아닙니다. (영문, 숫자, ., _, - 만 가능)'); } else { setEmailError(''); } }} />
           <span style={{padding:'0 10px', color:'#888'}}>@</span>
-          <input type="text" placeholder="naver.com" tabIndex="-1" style={styles.input} value={emailDomain} onChange={(e) => setEmailDomain(e.target.value)} />
+          <input id="email-domain"  type="text" placeholder="naver.com" tabIndex="-1" style={styles.input} value={emailDomain} onChange={(e) => setEmailDomain(e.target.value)} />
         </div>
         {emailError && <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>{emailError}</p>}
 

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GlobalLogContext } from '../context/GlobalLogProvider';
 import { UserContext } from '../context/UserContext';
 import { CartContext } from '../context/CartContext';
 import { TimerContext } from '../context/TimerContext';
@@ -13,39 +14,33 @@ const GlobalSkipBtn = () => {
   const { user } = useContext(UserContext);
   const { clearCart } = useContext(CartContext);
   const { endTimer } = useContext(TimerContext);
+  const { skipCurrentPage } = useContext(GlobalLogContext);
 
   // 시작 페이지('/')에서는 버튼을 보여주지 않음 (시작 버튼을 눌러야 하니까)
   if (location.pathname === '/') return null;
 
   const handleSkip = async () => {
     const currentPath = location.pathname;
+    skipCurrentPage();
 
     // 1️⃣ 로그인 페이지 -> 회원가입으로
     if (currentPath === '/login') {
-      alert("⏭ 단계 건너뛰기: 회원가입 페이지로 이동합니다.");
-      navigate('/signup');
-    } 
-    // 2️⃣ 회원가입 페이지 -> 쇼핑몰 홈으로
-    else if (currentPath === '/signup') {
-      alert("⏭ 단계 건너뛰기: 쇼핑몰 메인으로 이동합니다.");
-      navigate('/shop');
-    }
-    // 3️⃣ 쇼핑몰 홈 -> 장바구니로
-    else if (currentPath === '/shop' || currentPath.includes('/product')) {
-      alert("⏭ 단계 건너뛰기: 장바구니 페이지로 이동합니다.");
-      navigate('/cart');
-    }
-    // 4️⃣ 장바구니 -> 결제 페이지로
-    else if (currentPath === '/cart') {
-      alert("⏭ 단계 건너뛰기: 결제 페이지로 이동합니다.");
-      navigate('/payment');
-    }
-    // 5️⃣ ✨ 결제 페이지 -> 실험 종료 (결제하기 버튼과 동일한 기능)
-    else if (currentPath === '/payment') {
-        if (window.confirm("⏭ 이 단계를 건너뛰고 실험을 종료하시겠습니까?\n(가상으로 결제 완료 처리됩니다)")) {
-            await finishTestForcefully();
-        }
-    }
+  alert("⏭ 단계 건너뛰기: 회원가입 페이지로 이동합니다.");
+  navigate('/signup');
+} else if (currentPath === '/signup') {
+  alert("⏭ 단계 건너뛰기: 쇼핑몰 메인으로 이동합니다.");
+  navigate('/shop');
+} else if (currentPath === '/shop' || currentPath.includes('/product')) {
+  alert("⏭ 단계 건너뛰기: 장바구니 페이지로 이동합니다.");
+  navigate('/cart');
+} else if (currentPath === '/cart') {
+  alert("⏭ 단계 건너뛰기: 결제 페이지로 이동합니다.");
+  navigate('/payment');
+} else if (currentPath === '/payment') {
+  if (window.confirm("⏭ 이 단계를 건너뛰고 실험을 종료하시겠습니까?\n(가상으로 결제 완료 처리됩니다)")) {
+    await finishTestForcefully();
+  }
+}
   };
 
   // ✨ 강제 실험 종료 함수 (결제 페이지 로직과 동일)

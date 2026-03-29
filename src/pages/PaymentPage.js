@@ -56,7 +56,8 @@ const PaymentPage = () => {
   const shippingFee = isCouponApplied ? 3000 : 0; 
   const finalPrice = totalProductPrice - couponDiscount - usedPoints + shippingFee;
 
-  const handlePayment = async () => {
+  // PaymentPage.js - handlePayment 함수 수정
+const handlePayment = async () => {
     if (totalProductPrice === 0) {
       alert("결제할 상품이 없습니다. 장바구니를 확인해주세요.");
       return;
@@ -70,7 +71,27 @@ const PaymentPage = () => {
       return;
     }
 
-    const timeResult = endTimer(); 
+    // ── 테스트 성공 이벤트 발생 → GlobalLogProvider가 is_success를 true로 변경 ──
+    window.dispatchEvent(new Event('test_success'));
+
+    // ── 로그 강제 출력 ────────────────────────────────────────────
+    // beforeunload는 브라우저 닫을 때만 실행되므로
+    // 결제 완료 시점에 직접 window.__log로 로그 출력
+    if (window.__log) {
+      const startTime =
+        parseInt(sessionStorage.getItem('session_start_time'), 10) ||
+        (localStorage.getItem('testStartTime')
+          ? new Date(localStorage.getItem('testStartTime')).getTime()
+          : Date.now());
+
+      window.__log.current.duration_ms = Date.now() - startTime;
+
+      console.warn('===== [테스트 완료] 최종 산출된 JSON 로그 =====');
+      console.log(JSON.stringify(window.__log.current, null, 2));
+    }
+    // ──────────────────────────────────────────────────────────────
+
+    const timeResult = endTimer();
     let timeLogStr = "시간 측정 불가";
     if (timeResult) {
         timeLogStr = `${timeResult.formatted} 소요 (${timeResult.durationSeconds}초)`;
@@ -79,7 +100,7 @@ const PaymentPage = () => {
     try {
         await axios.post('http://localhost:8080/api/log', {
             username: user?.username || user?.name || 'guest',
-            action: 'TEST_END', 
+            action: 'TEST_END',
             detail: `[결제완료] 수단:${payMethod} | 최종금액:${finalPrice} | 소요시간: ${timeLogStr}`
         });
 
@@ -93,7 +114,7 @@ const PaymentPage = () => {
         clearCart();
         navigate('/');
     }
-  };
+};
 
   const handleCancelPanic = () => {
     if(window.confirm("경고: 정말 결제를 취소하시겠습니까?\n지금까지 적용된 혜택이 해제되며 배송지 정보가 초기화됩니다.")) {

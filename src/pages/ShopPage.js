@@ -64,7 +64,7 @@ const ShopPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const { user, logout } = useContext(UserContext);
-  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [, setHoveredProduct] = useState(null);
 
   const [currentCategory, setCurrentCategory] = useState("BEST 20");
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -193,8 +193,7 @@ const ShopPage = () => {
         <div style={{
           position: 'fixed', bottom: '30px', left: '30px', zIndex: 1000,
           backgroundColor: '#333', color: 'white', padding: '20px', borderRadius: '8px',
-          boxShadow: '0 4px 10px rgba(0,0,0,0.3)', width: '220px',
-          position: 'fixed' // relative 역할 포함 위해
+          boxShadow: '0 4px 10px rgba(0,0,0,0.3)', width: '220px'
         }}>
           {/* ✨ 우측 상단 닫기(X) 버튼 추가 */}
           <span 
