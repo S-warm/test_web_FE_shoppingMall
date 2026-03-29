@@ -13,6 +13,7 @@ import { UserContext } from '../context/UserContext';
 import { CartContext } from '../context/CartContext';
 import { TimerContext } from '../context/TimerContext';
 import { GlobalLogContext } from '../context/GlobalLogProvider';
+import { saveLogToDB } from '../utils/saveLogToDB';
 
 const GlobalAbandonBtn = () => {
   const navigate = useNavigate();
@@ -29,22 +30,10 @@ const GlobalAbandonBtn = () => {
   const handleAbandon = async () => {
     if (!window.confirm("테스트를 포기하시겠습니까?\n지금까지의 기록은 저장됩니다.")) return;
 
-    // ── 1. 지금까지 찍힌 로그 출력 ──────────────────────────────
-    // is_success는 false 유지 (포기했으니까)
     if (window.__log) {
-      const startTime =
-        parseInt(sessionStorage.getItem('session_start_time'), 10) ||
-        (localStorage.getItem('testStartTime')
-          ? new Date(localStorage.getItem('testStartTime')).getTime()
-          : Date.now());
-
-      window.__log.current.duration_ms = Date.now() - startTime;
-      window.__log.current.is_success = false;
-
-      console.warn('===== [테스트 포기] 최종 산출된 JSON 로그 =====');
-      console.log(JSON.stringify(window.__log.current, null, 2));
-    }
-
+  window.__log.current.is_success = false;
+  await saveLogToDB(window.__log.current);
+}
     // ── 2. 소요 시간 계산 ─────────────────────────────────────
     const timeResult = endTimer();
     const timeLogStr = timeResult

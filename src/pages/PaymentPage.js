@@ -5,6 +5,7 @@ import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 import { UserContext } from '../context/UserContext';
 import { TimerContext } from '../context/TimerContext'; 
+import { saveLogToDB } from '../utils/saveLogToDB';
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -74,21 +75,11 @@ const handlePayment = async () => {
     // ── 테스트 성공 이벤트 발생 → GlobalLogProvider가 is_success를 true로 변경 ──
     window.dispatchEvent(new Event('test_success'));
 
-    // ── 로그 강제 출력 ────────────────────────────────────────────
-    // beforeunload는 브라우저 닫을 때만 실행되므로
-    // 결제 완료 시점에 직접 window.__log로 로그 출력
-    if (window.__log) {
-      const startTime =
-        parseInt(sessionStorage.getItem('session_start_time'), 10) ||
-        (localStorage.getItem('testStartTime')
-          ? new Date(localStorage.getItem('testStartTime')).getTime()
-          : Date.now());
-
-      window.__log.current.duration_ms = Date.now() - startTime;
-
-      console.warn('===== [테스트 완료] 최종 산출된 JSON 로그 =====');
-      console.log(JSON.stringify(window.__log.current, null, 2));
-    }
+   // ── 로그 DB 저장 ──────────────────────────────────────────────
+if (window.__log) {
+  window.__log.current.is_success = true;
+  await saveLogToDB(window.__log.current);
+}
     // ──────────────────────────────────────────────────────────────
 
     const timeResult = endTimer();
