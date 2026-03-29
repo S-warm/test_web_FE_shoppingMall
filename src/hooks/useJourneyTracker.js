@@ -68,6 +68,8 @@ export const useJourneyTracker = () => {
       step_order: sessionLog.current.pages.length + 1,  // 몇 번째 페이지인지
       url: window.location.origin + currentUrl,          // 전체 URL
       status: 'PASSED',                                  // 이슈 없으면 PASSED, 있으면 HAS_ISSUES로 변경됨
+      wcag_grade: 'WCAG 2.1 LEVEL AAA',
+      total_elements_scanned: document.querySelectorAll('*').length, // total_elements_scanned: 페이지 진입 시점의 전체 DOM 요소 개수
       page_issues_count: 0,
       wcag_related_count: 0,
       issues: []

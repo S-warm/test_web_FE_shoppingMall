@@ -88,6 +88,16 @@ export const GlobalLogProvider = ({ children }) => {
           currentPage.wcag_related_count = 0;
         }
         currentPage.wcag_related_count += 1;
+
+        // ↓ 추가: wcag_related_count에 따라 등급 동적 계산
+        // 0건 → AAA / 1~2건 → AA / 3~4건 → A / 5건 이상 → FAIL
+        if (currentPage.wcag_related_count >= 5) {
+          currentPage.wcag_grade = 'WCAG 2.1 FAIL';
+        } else if (currentPage.wcag_related_count >= 3) {
+          currentPage.wcag_grade = 'WCAG 2.1 LEVEL A';
+        } else if (currentPage.wcag_related_count >= 1) {
+          currentPage.wcag_grade = 'WCAG 2.1 LEVEL AA';
+        }
       }
 
       currentPage.issues.push({
