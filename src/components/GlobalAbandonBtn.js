@@ -52,6 +52,7 @@ const GlobalAbandonBtn = () => {
     }
 
     // ── 4. 정리 후 처음으로 ───────────────────────────────────
+    sessionStorage.removeItem('hasViewedTerms');
     clearCart();
     localStorage.removeItem('testStartTime');
     resetLog(); // 다음 테스터를 위해 로그 초기화
