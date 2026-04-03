@@ -95,9 +95,12 @@ export const GlobalLogProvider = ({ children }) => {
       sessionLog.current.is_success = true;
     };
 
-    const handleBeforeUnload = () => {
-      saveLogToDB(sessionLog.current);
-    };
+   const handleBeforeUnload = () => {
+  // 세션이 시작된 경우에만 저장 (session_id 있을 때만)
+  if (sessionLog.current.session_id) {
+    saveLogToDB(sessionLog.current);
+  }
+};
 
     window.addEventListener('test_success', handleSuccessEvent);
     window.addEventListener('beforeunload', handleBeforeUnload);

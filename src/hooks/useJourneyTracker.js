@@ -30,7 +30,7 @@ export const useJourneyTracker = () => {
     if (
   !isSkipNavigation &&
   sessionLog.current.pages.length > 0 &&
-  timeSpentOnPrevPage < std.interaction.pogo_sticking_time_ms &&
+timeSpentOnPrevPage < std.INTERACTION.POGO_STICKING_TIME_MS &&
   sharedTrackData.current.clickCountOnCurrentPage <= 1
 ) {
   logIssue('pogo_sticking', {
