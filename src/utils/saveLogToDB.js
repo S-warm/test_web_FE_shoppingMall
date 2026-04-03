@@ -16,7 +16,6 @@ export const saveLogToDB = async (logData) => {
       persona_age: logData.persona_age,
       is_success: logData.is_success,
       duration_ms: logData.duration_ms,
-      total_issues_count: logData.total_issues_count,
       pages_json: JSON.stringify(logData.pages)
     });
     console.log('✅ UX 로그 DB 저장 완료');
