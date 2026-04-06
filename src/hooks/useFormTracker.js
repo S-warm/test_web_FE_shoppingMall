@@ -86,7 +86,7 @@ export const useFormTracker = () => {
           // FLASH_FEEDBACK_MIN_MS 미만으로 노출됐으면 이슈 기록
           if (visibleDuration < std.INTERACTION.FLASH_FEEDBACK_MIN_MS) {
             logIssue('flash_feedback', {
-  target_html: node.outerHTML?.substring(0, 100) || null
+  target_html: node.outerHTML || null
 });
           }
         });
@@ -127,11 +127,11 @@ export const useFormTracker = () => {
         if (clearCount >= limit) {
           if (isPassword) {
            logIssue('blind_password', {
-  target_html: target.outerHTML.substring(0, 100)
+  target_html: target.outerHTML
 });
           } else {
             logIssue('form_input_hell', {
-  target_html: target.outerHTML.substring(0, 100)
+  target_html: target.outerHTML
 });
           }
           // 임계값 도달 후 리셋 (이후 추가 삭제 시 중복 로그 방지)
@@ -168,7 +168,7 @@ export const useFormTracker = () => {
       if (!isFormElement) return;
 
      logIssue('forced_mouse_fallback', {
-  target_html: e.target.outerHTML.substring(0, 100)
+  target_html: e.target.outerHTML
 });
 
       currentFormData.lastTabTime = null; // 중복 로그 방지

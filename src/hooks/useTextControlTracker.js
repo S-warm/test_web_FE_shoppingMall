@@ -42,7 +42,7 @@ export const useTextControlTracker = () => {
   if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
   logIssue('reading_struggle', {
-    target_html: target.outerHTML?.substring(0, 100) || null
+    target_html: target.outerHTML || null
   });
 };
 
@@ -80,7 +80,7 @@ export const useTextControlTracker = () => {
 
       if (isUnselectableByCSS || doubleClickCount >= std.TEXT_CONTROL.UNSELECTABLE_DBLCLICK_LIMIT) {
        logIssue('unselectable_text', {
-  target_html: target.outerHTML?.substring(0, 100) || null
+  target_html: target.outerHTML || null
 });
         doubleClickCount = 0; // 이슈 기록 후 리셋
       }

@@ -109,7 +109,7 @@ export const useMouseTracker = () => {
           Math.hypot(last.x - first.x, last.y - first.y) < std.INTERACTION.RAGE_CLICK_RADIUS_PX
         ) {
           logIssue('rage_click', {
-  target_html: target.outerHTML.substring(0, 100)
+  target_html: target.outerHTML
 });
           // 광클 감지 후 이력 초기화 (중복 로그 방지)
           currentMouseData.clickHistory = [];
@@ -132,7 +132,7 @@ export const useMouseTracker = () => {
             curr.target === prev.target
           ) {
             logIssue('dead_click', {
-  target_html: target.outerHTML.substring(0, 100)
+  target_html: target.outerHTML
 });
           }
         }
@@ -147,7 +147,7 @@ export const useMouseTracker = () => {
 
           if (currentMouseData.accordionClickCount >= std.INTERACTION.ACCORDION_FATIGUE_COUNT) {
             logIssue('accordion_fatigue', {
-  target_html: text.substring(0, 50)
+  target_html: text
 });
             // 이슈 기록 후 카운트/타이머 리셋
             currentMouseData.accordionClickCount = 0;
@@ -186,7 +186,7 @@ export const useMouseTracker = () => {
 
               if (currentMouseData.onboardingSkipCount >= std.INTERACTION.ONBOARDING_SKIP_COUNT) {
                 logIssue('onboarding_skip_rage', {
-  target_html: target.outerHTML.substring(0, 100)
+  target_html: target.outerHTML
 });
                 // 로그 찍힌 후 리셋
                 currentMouseData.onboardingSkipCount = 0;
@@ -241,7 +241,7 @@ export const useMouseTracker = () => {
           sharedTrackData.current.scrollHijackLogged = true;
 
           logIssue('scroll_hijacking', {
-  target_html: scrollTarget.outerHTML?.substring(0, 100) || null
+  target_html: scrollTarget.outerHTML || null
 });
         }
       }
