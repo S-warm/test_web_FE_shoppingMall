@@ -40,7 +40,7 @@ const SignupPage = () => {
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:8080/api/check-username?username=${username}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/check-username?username=${username}`);
       if (response.data === true) {
         triggerFleetingError("이미 사용 중인 아이디입니다.", 500);
         setIsChecked(false); 
@@ -89,7 +89,7 @@ const SignupPage = () => {
     }
 
     try {
-      await axios.post('http://localhost:8080/api/signup', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/signup`, {
         username, password, name, phone, address, email: `${emailPrefix}@${emailDomain}`
       });
       alert('회원가입이 완료되었습니다!');

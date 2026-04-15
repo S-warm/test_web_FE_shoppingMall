@@ -27,7 +27,7 @@ const CartPage = () => {
         // 로그인 안 했으면 'GUEST'로 기록, 했으면 아이디로 기록
         const username = user.username || "GUEST"; 
         
-        await axios.post('http://localhost:8080/api/log', {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/log`, {
             username: username,
             action: "CART_REMOVE", // ✨ 행동 이름: 장바구니 삭제
             detail: `장바구니에서 [${itemName}] 상품을 삭제함`

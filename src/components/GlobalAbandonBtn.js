@@ -42,7 +42,7 @@ const GlobalAbandonBtn = () => {
 
     // ── 3. DB에 포기 로그 저장 ───────────────────────────────
     try {
-      await axios.post('http://localhost:8080/api/log', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/log`, {
         username: user?.username || user?.name || 'guest',
         action: 'TEST_ABANDON',
         detail: `[포기] 포기 페이지: ${location.pathname} | 소요시간: ${timeLogStr}`

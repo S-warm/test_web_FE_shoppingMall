@@ -64,7 +64,7 @@ const StartPage = () => {
   // 3. 서버에 '테스트 시작(TEST_START)' 최초 로그 전송
     // StartPage.js 수정
 try {
-  await axios.post('http://localhost:8080/api/log', {
+  await axios.post(`${process.env.REACT_APP_API_URL}/api/log`, {
     username: `persona_${age}`,
     action: 'TEST_START',
     detail: `연령:${age}세 | session_id:${sessionId} | 시작시각:${startTime}`

@@ -91,7 +91,7 @@ if (window.__log) {
     }
 
     try {
-        await axios.post('http://localhost:8080/api/log', {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/log`, {
             username: user?.username || user?.name || 'guest',
             action: 'TEST_END',
             detail: `[결제완료] 수단:${payMethod} | 최종금액:${finalPrice} | 소요시간: ${timeLogStr}`

@@ -30,7 +30,7 @@ const GlobalRestartBtn = () => {
       localStorage.removeItem('testStartTime');
 
       // ── 4. 재시작 로그 DB 저장 ───────────────────────────────
-      axios.post('http://localhost:8080/api/log', {
+      axios.post(`${process.env.REACT_APP_API_URL}/api/log`, {
         username: user.username || "GUEST",
         action: 'TEST_RESTART',
         detail: `[페이지: ${location.pathname}]에서 초기화 버튼 클릭`
