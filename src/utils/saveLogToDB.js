@@ -37,7 +37,7 @@ export const saveLogToDB = async (logData) => {
   };
 
   try {
-    await axios.post('{import.meta.env.VITE_API_URL}/api/ux-logs/session', {
+    await axios.post('${process.env.REACT_APP_API_URL}/api/ux-logs/session', {
       session_id: logData.session_id,
       log_json: JSON.stringify(orderedLog)
     });
