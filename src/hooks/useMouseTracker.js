@@ -51,54 +51,6 @@ export const useMouseTracker = () => {
     onboardingSkipCount: 0,
   });
 
-  // ================================================================
-  // [원인 분석 1] 헛발질(Dead Click) 원인 분류
-  // 클릭된 요소의 CSS 스타일을 보고 왜 버튼으로 착각했는지 추론
-  // ================================================================
-  const analyzeDeadClickCause = (target) => {
-    const styles = window.getComputedStyle(target);
-
-    // pointer 커서가 적용된 비상호작용 요소 → 커서가 클릭 가능하다고 오해하게 만듦
-    if (styles.cursor === 'pointer') {
-      return { category: '사용성', sub_category: '잘못된 커서 표기', standard: 'Nielsen #4', detail: '비상호작용 요소에 마우스 pointer 커서가 강제 적용됨' };
-    }
-    // 밑줄이 있는 일반 텍스트 → 하이퍼링크로 착각하게 만듦
-    if (styles.textDecorationLine?.includes('underline')) {
-      return { category: '시각요소', sub_category: '링크 형태 오인', standard: 'Web Design Convention', detail: '일반 텍스트에 밑줄이 존재하여 하이퍼링크로 착각함' };
-    }
-    // 배경색 + 라운드 처리 → 버튼처럼 보이게 만듦
-    if (styles.backgroundColor !== 'rgba(0, 0, 0, 0)' && parseInt(styles.borderRadius) > 0) {
-      return { category: '시각요소', sub_category: '버튼 형태 오인', standard: 'Affordance Theory', detail: '배경색과 라운드 처리가 적용되어 버튼처럼 위장됨' };
-    }
-    return { category: '시각요소', sub_category: '클릭 영역 불명확', standard: 'Visual Hierarchy', detail: '명확한 시각적 단서 없이 클릭을 시도함' };
-  };
-
-  // ================================================================
-  // [원인 분석 2] 광클(Rage Click) 원인 분류
-  // 광클이 발생한 요소가 상호작용 요소인지 여부로 원인 추론
-  // ================================================================
-  const analyzeRageClickCause = (target) => {
-    const isInteractive = target.closest('a, button, input, select, textarea, [role="button"]');
-
-    if (isInteractive) {
-      const form = target.closest('form');
-      // 폼 안에 유효성 검사 에러가 있는지 확인
-      const hasValidationError = form && (
-        form.querySelector(':invalid') ||
-        form.querySelector('.error') ||
-        form.querySelector('[aria-invalid="true"]')
-      );
-
-      if (hasValidationError) {
-        return { category: '접근성', sub_category: '에러 식별 불가', standard: 'WCAG 3.3.1', detail: '유효성 검사 에러가 발생했으나 메시지가 명확하지 않아 계속 누름' };
-      }
-      if (target.tagName === 'BUTTON' && !target.disabled) {
-        return { category: '사용성', sub_category: '시스템 피드백 부재', standard: 'Nielsen #1', detail: '통신 중 버튼이 비활성화되지 않아 중복 클릭됨' };
-      }
-      return { category: '사용성', sub_category: '응답 지연', standard: 'Response Latency', detail: '클릭에 대한 시각적 반응이 권장 응답 시간을 초과함' };
-    }
-    return { category: '사용성', sub_category: '반복된 헛발질', standard: 'Affordance Error', detail: '비상호작용 요소를 버튼으로 확신하여 광클함' };
-  };
 
   useEffect(() => {
     const currentMouseData = mouseData.current;
@@ -123,11 +75,9 @@ export const useMouseTracker = () => {
     sharedTrackData.current.idleLogged = true;
 
     sharedTrackData.current.idleCount += 1;
-    logIssue('IDLE_TIME', '사용성', '인지 과부하', 'LOW', {
-      scroll_y: window.scrollY,
-      standard: 'Nielsen #1 (시스템 상태 가시성)',
-      detail: `${std.INTERACTION.IDLE_TIME_MS / 1000}초간 조작 없음 (${std.tier} 기준) - 이 페이지에서 ${sharedTrackData.current.idleCount}번째 멈춤`
-    });
+    logIssue('idle_time', {
+  target_html: null
+});
   }, std.INTERACTION.IDLE_TIME_MS);
 };
 
@@ -158,14 +108,9 @@ export const useMouseTracker = () => {
           last.time - first.time <= std.INTERACTION.RAGE_CLICK_MS &&
           Math.hypot(last.x - first.x, last.y - first.y) < std.INTERACTION.RAGE_CLICK_RADIUS_PX
         ) {
-          const cause = analyzeRageClickCause(target);
-          logIssue('RAGE_CLICK', cause.category, cause.sub_category, 'HIGH', {
-            target_html: target.outerHTML.substring(0, 100),
-            coord_x: x,
-            coord_y: y,
-            standard: cause.standard,
-            detail: `${cause.detail} (${std.tier} 기준: ${std.INTERACTION.RAGE_CLICK_MS}ms 내 ${std.INTERACTION.RAGE_CLICK_COUNT}회 클릭)`
-          });
+          logIssue('rage_click', {
+  target_html: target.outerHTML
+});
           // 광클 감지 후 이력 초기화 (중복 로그 방지)
           currentMouseData.clickHistory = [];
           return;
@@ -186,14 +131,9 @@ export const useMouseTracker = () => {
             curr.time - prev.time <= std.INTERACTION.DEAD_CLICK_TIME_MS &&
             curr.target === prev.target
           ) {
-            const cause = analyzeDeadClickCause(target);
-            logIssue('DEAD_CLICK', cause.category, cause.sub_category, 'MEDIUM', {
-              target_html: target.outerHTML.substring(0, 100),
-              coord_x: x,
-              coord_y: y,
-              standard: cause.standard,
-              detail: `${cause.detail} (${std.tier} 기준: ${std.INTERACTION.DEAD_CLICK_TIME_MS}ms 내 재클릭)`
-            });
+            logIssue('dead_click', {
+  target_html: target.outerHTML
+});
           }
         }
       } else {
@@ -206,11 +146,9 @@ export const useMouseTracker = () => {
           currentMouseData.accordionClickCount += 1;
 
           if (currentMouseData.accordionClickCount >= std.INTERACTION.ACCORDION_FATIGUE_COUNT) {
-            logIssue('ACCORDION_FATIGUE', '사용성', '과도한 뎁스 설계', 'LOW', {
-              target_html: text.substring(0, 50),
-              standard: 'Information Architecture - 과도한 뎁스(Depth) 및 클릭 강요',
-              detail: `'${text}' 버튼을 ${std.INTERACTION.ACCORDION_FATIGUE_MS / 1000}초 내 ${currentMouseData.accordionClickCount}회 연속 클릭 (${std.tier} 기준). 정보가 과도하게 숨겨진 구조로 판단`
-            });
+            logIssue('accordion_fatigue', {
+  target_html: text
+});
             // 이슈 기록 후 카운트/타이머 리셋
             currentMouseData.accordionClickCount = 0;
             if (currentMouseData.accordionTimer) clearTimeout(currentMouseData.accordionTimer);
@@ -247,13 +185,9 @@ export const useMouseTracker = () => {
               currentMouseData.onboardingSkipCount += 1;
 
               if (currentMouseData.onboardingSkipCount >= std.INTERACTION.ONBOARDING_SKIP_COUNT) {
-                logIssue('ONBOARDING_SKIP_RAGE', '사용성', '과도한 사용자 간섭', 'LOW', {
-                  target_html: target.outerHTML.substring(0, 100),
-                  coord_x: x,
-                  coord_y: y,
-                  standard: 'Information Architecture - 과도한 온보딩',
-                  detail: `팝업/온보딩 단계를 평균 ${stepDuration}ms 만에 넘김. 읽기 불가능한 속도(${std.tier} 기준: ${std.INTERACTION.ONBOARDING_STEP_MIN_MS}ms)로 ${currentMouseData.onboardingSkipCount}회 연속 스킵`
-                });
+                logIssue('onboarding_skip_rage', {
+  target_html: target.outerHTML
+});
                 // 로그 찍힌 후 리셋
                 currentMouseData.onboardingSkipCount = 0;
                 currentMouseData.onboardingStepTime = null;
@@ -306,13 +240,9 @@ export const useMouseTracker = () => {
           if (sharedTrackData.current.scrollHijackLogged) return;
           sharedTrackData.current.scrollHijackLogged = true;
 
-          logIssue('SCROLL_HIJACKING', '사용성', '통제권 납치', 'MEDIUM', {
-            target_html: scrollTarget.outerHTML?.substring(0, 100) || null,
-            coord_x: null,
-            coord_y: null,
-            standard: 'Nielsen #3 (사용자 통제권) / UX Control Hijacking',
-            detail: `window 스크롤 중 타겟이 내부 ${scrollTarget.tagName} 요소로 납치됨. 사용자가 의도하지 않은 내부 스크롤 발생`
-          });
+          logIssue('scroll_hijacking', {
+  target_html: scrollTarget.outerHTML || null
+});
         }
       }
 

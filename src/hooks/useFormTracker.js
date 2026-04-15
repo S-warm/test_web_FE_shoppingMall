@@ -85,13 +85,9 @@ export const useFormTracker = () => {
 
           // FLASH_FEEDBACK_MIN_MS 미만으로 노출됐으면 이슈 기록
           if (visibleDuration < std.INTERACTION.FLASH_FEEDBACK_MIN_MS) {
-            logIssue('FLASH_FEEDBACK', '접근성', '피드백 노출 시간 부족', 'MEDIUM', {
-              target_html: node.outerHTML?.substring(0, 100) || null,
-              coord_x: null,
-              coord_y: null,
-              standard: 'WCAG 2.2.1 / Nielsen 응답 시간 원칙',
-              detail: `에러 메시지가 ${visibleDuration}ms 만에 사라짐. 최소 권장 노출 시간 ${std.INTERACTION.FLASH_FEEDBACK_MIN_MS}ms 미달 (${std.tier} 기준). 사용자가 읽기 전에 사라져 혼란 유발`
-            });
+            logIssue('flash_feedback', {
+  target_html: node.outerHTML || null
+});
           }
         });
       });
@@ -130,21 +126,13 @@ export const useFormTracker = () => {
 
         if (clearCount >= limit) {
           if (isPassword) {
-            logIssue('BLIND_PASSWORD', '사용성', '비밀번호 가시성 부재', 'MEDIUM', {
-              target_html: target.outerHTML.substring(0, 100),
-              coord_x: null,
-              coord_y: null,
-              standard: 'WCAG 1.3.5 / Nielsen #1 (시스템 상태 가시성)',
-              detail: `비밀번호 필드(${fieldKey})를 ${clearCount}회 전체 삭제 (${std.tier} 기준: ${limit}회). '비밀번호 보기' 아이콘 부재로 오타 위치 확인 불가 → 전체 재입력 반복`
-            });
+           logIssue('blind_password', {
+  target_html: target.outerHTML
+});
           } else {
-            logIssue('FORM_INPUT_HELL', '사용성', '입력 관용도 부족', 'MEDIUM', {
-              target_html: target.outerHTML.substring(0, 100),
-              coord_x: null,
-              coord_y: null,
-              standard: 'Nielsen #5 (오류 예방) / WCAG 3.3.1 (오류 식별)',
-              detail: `입력 필드(${fieldKey})를 ${clearCount}회 전체 삭제 후 재입력 (${std.tier} 기준: ${limit}회). 유효성 검사 규칙 불명확 또는 인라인 에러 안내 부재로 시행착오 반복`
-            });
+            logIssue('form_input_hell', {
+  target_html: target.outerHTML
+});
           }
           // 임계값 도달 후 리셋 (이후 추가 삭제 시 중복 로그 방지)
           currentFormData.clearCountMap[fieldKey] = 0;
@@ -179,13 +167,9 @@ export const useFormTracker = () => {
       const isFormElement = e.target.closest('input, select, button, textarea');
       if (!isFormElement) return;
 
-      logIssue('FORCED_MOUSE_FALLBACK', '사용성', '포커스 이동 오류', 'LOW', {
-        target_html: e.target.outerHTML.substring(0, 100),
-        coord_x: e.clientX,
-        coord_y: e.clientY,
-        standard: 'WCAG 2.1.1 (키보드 접근성) / Nielsen #4 (일관성)',
-        detail: `Tab 키 입력 후 ${timeSinceTab}ms 만에 마우스 클릭 (${std.tier} 기준: ${std.INTERACTION.FORCED_MOUSE_MS}ms). Tab 포커스가 다음 입력 필드로 이동하지 않아 마우스로 강제 전환. tabIndex 설정 오류 의심`
-      });
+     logIssue('forced_mouse_fallback', {
+  target_html: e.target.outerHTML
+});
 
       currentFormData.lastTabTime = null; // 중복 로그 방지
     };
@@ -223,13 +207,9 @@ export const useFormTracker = () => {
           );
 
           if (lostFields.length > 0) {
-            logIssue('STATE_LOSS_REENTRY', '사용성', '폼 상태 초기화', 'HIGH', {
-              target_html: null,
-              coord_x: null,
-              coord_y: null,
-              standard: 'Nielsen #5 (오류 예방) / UX State Management',
-              detail: `뒤로가기 후 폼 입력 데이터 소실. 초기화된 필드: [${lostFields.join(', ')}]. BFCache 미지원 또는 React 상태 미보존으로 사용자 재입력 강요`
-            });
+            logIssue('state_loss_reentry', {
+  target_html: null
+});
           }
         }
       }

@@ -3,87 +3,62 @@
 // 역할: 페르소나 나이를 받아서 해당 연령대의 기준값을 반환하는 헬퍼 함수
 // 사용 예시:
 //   const std = getStandardByAge(70);
-//   std.INTERACTION.IDLE_TIME_MS  → 4000 (SENIOR 기준)
-//   std.VISUAL.MIN_CONTRAST_RATIO → 7.0  (SENIOR 기준)
+//   std.INTERACTION.IDLE_TIME_MS → 4000 (senior 기준)
 // ============================================================
 
 import { UX_STANDARDS } from '../constants/evaluationStandards';
 
 export const getStandardByAge = (age) => {
-  // 나이가 없거나 이상한 값이면 GENERAL(20대) 기준 적용
   const safeAge = typeof age === 'number' && age > 0 ? age : 20;
 
-  // 연령대 판별
-  // SENIOR_THRESHOLD(65) 이상 → SENIOR
-  // MIDDLE_THRESHOLD(50) 이상 → MIDDLE
-  // 그 외 → GENERAL
   const tier =
-    safeAge >= UX_STANDARDS.AGE_THRESHOLD.SENIOR ? 'SENIOR' :
-    safeAge >= UX_STANDARDS.AGE_THRESHOLD.MIDDLE ? 'MIDDLE' :
-    'GENERAL';
+    safeAge >= UX_STANDARDS.age_threshold.senior ? 'senior' :
+    safeAge >= UX_STANDARDS.age_threshold.middle ? 'middle' :
+    'general';
 
-  // 각 카테고리에서 해당 tier의 값만 뽑아서 평탄화된 객체로 반환
-  // Hook에서 std.IDLE_TIME_MS 처럼 바로 쓸 수 있게
-  return {
-    tier, // 'GENERAL' | 'MIDDLE' | 'SENIOR' (로그 detail에 넣을 수 있음)
-
-    VISUAL: {
-      MIN_CONTRAST_RATIO: UX_STANDARDS.VISUAL[tier].MIN_CONTRAST_RATIO,
-      MIN_FONT_SIZE_PX: UX_STANDARDS.VISUAL[tier].MIN_FONT_SIZE_PX,
-    },
-
-    TYPOGRAPHY: {
-      LINE_HEIGHT: UX_STANDARDS.TYPOGRAPHY[tier].LINE_HEIGHT,
-      LETTER_SPACING_EM: UX_STANDARDS.TYPOGRAPHY[tier].LETTER_SPACING_EM,
-    },
-
-    INTERACTION: {
-      IDLE_TIME_MS:             UX_STANDARDS.INTERACTION.IDLE_TIME_MS[tier],
-      POGO_STICKING_TIME_MS:    UX_STANDARDS.INTERACTION.POGO_STICKING_TIME_MS[tier],
-      ACCORDION_FATIGUE_COUNT:  UX_STANDARDS.INTERACTION.ACCORDION_FATIGUE_COUNT[tier],
-      ACCORDION_FATIGUE_MS:     UX_STANDARDS.INTERACTION.ACCORDION_FATIGUE_MS[tier],
-      RAGE_CLICK_MS:            UX_STANDARDS.INTERACTION.RAGE_CLICK_MS[tier],
-      RAGE_CLICK_COUNT:         UX_STANDARDS.INTERACTION.RAGE_CLICK_COUNT[tier],
-      RAGE_CLICK_RADIUS_PX:     UX_STANDARDS.INTERACTION.RAGE_CLICK_RADIUS_PX[tier],
-      DEAD_CLICK_TIME_MS:       UX_STANDARDS.INTERACTION.DEAD_CLICK_TIME_MS[tier],
-      FORM_CLEAR_LIMIT:         UX_STANDARDS.INTERACTION.FORM_CLEAR_LIMIT[tier],
-      PASSWORD_CLEAR_LIMIT:     UX_STANDARDS.INTERACTION.PASSWORD_CLEAR_LIMIT[tier],
-      FORCED_MOUSE_MS:          UX_STANDARDS.INTERACTION.FORCED_MOUSE_MS[tier],
-      FLASH_FEEDBACK_MIN_MS:    UX_STANDARDS.INTERACTION.FLASH_FEEDBACK_MIN_MS[tier],
-      ONBOARDING_STEP_MIN_MS:   UX_STANDARDS.INTERACTION.ONBOARDING_STEP_MIN_MS[tier],
-      ONBOARDING_SKIP_COUNT:    UX_STANDARDS.INTERACTION.ONBOARDING_SKIP_COUNT[tier],
-    },
-
-    TEXT_CONTROL: {
-      UNSELECTABLE_DBLCLICK_LIMIT: UX_STANDARDS.TEXT_CONTROL.UNSELECTABLE_DBLCLICK_LIMIT[tier],
-      UNSELECTABLE_WINDOW_MS:      UX_STANDARDS.TEXT_CONTROL.UNSELECTABLE_WINDOW_MS[tier],
-    },
-
-    SEARCH: {
-      EMPTY_RESULT_WINDOW_MS:   UX_STANDARDS.SEARCH.EMPTY_RESULT_WINDOW_MS[tier],
-      EMPTY_RESULT_RETRY_COUNT: UX_STANDARDS.SEARCH.EMPTY_RESULT_RETRY_COUNT[tier],
-    },
-
-    BUTTON: {
-      // BUTTON은 tier별로 단일 값이므로 직접 매핑
-      MIN_SIZE_PX:
-        tier === 'SENIOR' ? UX_STANDARDS.BUTTON.SENIOR_MIN_SIZE_PX :
-        tier === 'MIDDLE' ? UX_STANDARDS.BUTTON.MIDDLE_MIN_SIZE_PX :
-        UX_STANDARDS.BUTTON.GENERAL_MIN_SIZE_PX,
-    },
-
-    ATTENTION: {
-      MAX_ELEMENTS:
-        tier === 'SENIOR' ? UX_STANDARDS.ATTENTION.SENIOR_MAX_ELEMENTS :
-        tier === 'MIDDLE' ? UX_STANDARDS.ATTENTION.MIDDLE_MAX_ELEMENTS :
-        UX_STANDARDS.ATTENTION.GENERAL_MAX_ELEMENTS,
-    },
-
-    LOADING: {
-      MAX_WAIT_MS:
-        tier === 'SENIOR' ? UX_STANDARDS.LOADING.SENIOR_MAX_WAIT_MS :
-        tier === 'MIDDLE' ? UX_STANDARDS.LOADING.MIDDLE_MAX_WAIT_MS :
-        UX_STANDARDS.LOADING.GENERAL_MAX_WAIT_MS,
-    },
-  };
+return {
+  tier,
+  INTERACTION: {
+    IDLE_TIME_MS:            UX_STANDARDS.interaction.idle_time_ms[tier],
+    POGO_STICKING_TIME_MS:   UX_STANDARDS.interaction.pogo_sticking_time_ms[tier],
+    ACCORDION_FATIGUE_COUNT: UX_STANDARDS.interaction.accordion_fatigue_count[tier],
+    ACCORDION_FATIGUE_MS:    UX_STANDARDS.interaction.accordion_fatigue_ms[tier],
+    RAGE_CLICK_MS:           UX_STANDARDS.interaction.rage_click_ms[tier],
+    RAGE_CLICK_COUNT:        UX_STANDARDS.interaction.rage_click_count[tier],
+    RAGE_CLICK_RADIUS_PX:    UX_STANDARDS.interaction.rage_click_radius_px[tier],
+    DEAD_CLICK_TIME_MS:      UX_STANDARDS.interaction.dead_click_time_ms[tier],
+    FORM_CLEAR_LIMIT:        UX_STANDARDS.interaction.form_clear_limit[tier],
+    PASSWORD_CLEAR_LIMIT:    UX_STANDARDS.interaction.password_clear_limit[tier],
+    FORCED_MOUSE_MS:         UX_STANDARDS.interaction.forced_mouse_ms[tier],
+    FLASH_FEEDBACK_MIN_MS:   UX_STANDARDS.interaction.flash_feedback_min_ms[tier],
+    ONBOARDING_STEP_MIN_MS:  UX_STANDARDS.interaction.onboarding_step_min_ms[tier],
+    ONBOARDING_SKIP_COUNT:   UX_STANDARDS.interaction.onboarding_skip_count[tier],
+  },
+  TEXT_CONTROL: {
+    UNSELECTABLE_DBLCLICK_LIMIT: UX_STANDARDS.text_control.unselectable_dblclick_limit[tier],
+    UNSELECTABLE_WINDOW_MS:      UX_STANDARDS.text_control.unselectable_window_ms[tier],
+  },
+  SEARCH: {
+    EMPTY_RESULT_WINDOW_MS:   UX_STANDARDS.search.empty_result_window_ms[tier],
+    EMPTY_RESULT_RETRY_COUNT: UX_STANDARDS.search.empty_result_retry_count[tier],
+  },
+  BUTTON: {
+    MIN_SIZE_PX:
+      tier === 'senior' ? UX_STANDARDS.button.senior_min_size_px :
+      tier === 'middle' ? UX_STANDARDS.button.middle_min_size_px :
+      UX_STANDARDS.button.general_min_size_px,
+  },
+  ATTENTION: {
+    MAX_ELEMENTS:
+      tier === 'senior' ? UX_STANDARDS.attention.senior_max_elements :
+      tier === 'middle' ? UX_STANDARDS.attention.middle_max_elements :
+      UX_STANDARDS.attention.general_max_elements,
+  },
+  LOADING: {
+    MAX_WAIT_MS:
+      tier === 'senior' ? UX_STANDARDS.loading.senior_max_wait_ms :
+      tier === 'middle' ? UX_STANDARDS.loading.middle_max_wait_ms :
+      UX_STANDARDS.loading.general_max_wait_ms,
+  },
+};
 };

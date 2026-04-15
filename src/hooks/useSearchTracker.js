@@ -122,13 +122,9 @@ export const useSearchTracker = () => {
         currentSearchData.isEmptyResult &&
         currentSearchData.emptyResultRetryCount >= std.SEARCH.EMPTY_RESULT_RETRY_COUNT
       ) {
-        logIssue('EMPTY_SEARCH_FRUSTRATION', '사용성', '검색 및 탐색 실패', 'MEDIUM', {
-          target_html: null,
-          coord_x: null,
-          coord_y: null,
-          standard: 'Nielsen #9 (오류 인식, 진단, 복구) / Search UX Guidelines',
-          detail: `검색 결과 없음 상태에서 "${currentSearchData.lastSearchQuery}" 등 ${currentSearchData.emptyResultRetryCount}회 검색어 수정 후 이탈 (${std.tier} 기준: ${std.SEARCH.EMPTY_RESULT_RETRY_COUNT}회). 오타 보정/자동완성 미지원으로 원하는 결과를 찾지 못한 것으로 판단`
-        });
+        logIssue('empty_search_frustration', {
+  target_html: null
+});
 
         // 이슈 기록 후 리셋
         currentSearchData.emptyResultRetryCount = 0;
