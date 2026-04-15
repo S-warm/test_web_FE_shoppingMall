@@ -37,7 +37,7 @@ export const saveLogToDB = async (logData) => {
   };
 
   try {
-    await axios.post('http://localhost:8080/api/ux-logs/session', {
+    await axios.post('invigorating-analysis-production-6785.up.railway.app/api/ux-logs/session', {
       session_id: logData.session_id,
       log_json: JSON.stringify(orderedLog)
     });
