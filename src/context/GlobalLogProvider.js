@@ -5,9 +5,15 @@ export const GlobalLogContext = createContext();
 
 export const GlobalLogProvider = ({ children }) => {
 
+  // 앱 최초 로드 시 세션 자동 초기화 (StartPage 없이도 동작)
+  if (!sessionStorage.getItem('session_id')) {
+    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem('session_id', sessionId);
+    sessionStorage.setItem('session_start_time', Date.now().toString());
+  }
+
   const sessionLog = useRef({
-    session_id: '',
-    persona_age: null,
+    session_id: sessionStorage.getItem('session_id'),
     is_success: false,
     duration_ms: 0,
     pages: []
@@ -36,9 +42,11 @@ export const GlobalLogProvider = ({ children }) => {
   }, []);
 
   const resetLog = useCallback(() => {
+    const newSessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem('session_id', newSessionId);
+    sessionStorage.setItem('session_start_time', Date.now().toString());
     sessionLog.current = {
-      session_id: '',
-      persona_age: null,
+      session_id: newSessionId,
       is_success: false,
       duration_ms: 0,
       pages: []

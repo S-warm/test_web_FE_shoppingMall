@@ -7,7 +7,10 @@ export const TimerProvider = ({ children }) => {
   // 시작 시간 (새로고침 해도 기억하도록 로컬스토리지 사용)
   const [startTime, setStartTime] = useState(() => {
     const saved = localStorage.getItem('testStartTime');
-    return saved ? new Date(saved) : null;
+    if (saved) return new Date(saved);
+    const now = new Date();
+    localStorage.setItem('testStartTime', now.toString());
+    return now;
   });
 
   // 1. 테스트 시작 (StartPage에서 호출)

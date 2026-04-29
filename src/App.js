@@ -1,8 +1,7 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CSDummyPage from './pages/CSDummyPage';
-import StartPage from './pages/StartPage';
 
 import { TimerProvider } from './context/TimerContext';
 import { CartProvider } from './context/CartContext';
@@ -38,7 +37,7 @@ function App() {
               
               {/* AutoLogger 태그가 완전히 제거되고 Routes만 남음 */}
               <Routes>
-                <Route path="/" element={<StartPage />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/signup" element={<SignupPage />} />

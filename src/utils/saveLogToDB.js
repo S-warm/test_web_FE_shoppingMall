@@ -21,7 +21,6 @@ export const saveLogToDB = async (logData) => {
 
   const orderedLog = {
     session_id: logData.session_id,
-    persona_age: logData.persona_age,
     is_success: logData.is_success,
     duration_ms: logData.duration_ms,
     pages: logData.pages.map(page => ({

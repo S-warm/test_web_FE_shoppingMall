@@ -15,7 +15,6 @@ export const useJourneyTracker = () => {
     // 세션 메타데이터 초기화 (최초 1회)
     if (!sessionLog.current.session_id) {
       sessionLog.current.session_id = sessionStorage.getItem('session_id');
-      sessionLog.current.persona_age = parseInt(sessionStorage.getItem('persona_age'), 10);
     }
 
     const age = sessionLog.current.persona_age;
