@@ -57,7 +57,6 @@ const banners = [
 const popupAdData = [
   { id: 1, title: 'WEEKEND SALE', subtitle: '주말특가, 최대 75% OFF!', desc: '매주 금/토/일 3일간 최대 혜택!\n설화수, 헤라 단독특집', img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=400&q=80', top: '10%', left: '45%', zIndex: 2001 },
   { id: 2, title: 'NEW MEMBER', subtitle: '신규 가입 즉시 10,000P', desc: '지금 가입하고 첫 구매 시\n무료배송 혜택까지 받아가세요.', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80', top: '15%', left: '50%', zIndex: 2002 },
-  { id: 3, title: 'SEASON OFF', subtitle: '25 S/S 클리어런스 세일', desc: '놓치면 후회할 마지막 기회\n재고 소진 시 자동 종료됩니다.', img: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80', top: '20%', left: '55%', zIndex: 2003 },
 ];
 
 const ShopPage = () => {
@@ -171,9 +170,11 @@ const ShopPage = () => {
           .fake-heart { display: inline-block; cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.2s, color 0.2s; }
           .fake-heart:hover { transform: scale(1.2); color: red !important; }
           .fake-heart:active { transform: scale(0.9); }
-          
+
           .fake-filter span { cursor: pointer; transition: color 0.2s; }
           .fake-filter span:hover { color: #333; font-weight: bold; }
+
+          .search-input::placeholder { color: #ccc !important; }
         `}
       </style>
 
@@ -242,8 +243,8 @@ const ShopPage = () => {
               </div>
             </div>
             <div style={{ height: '50px', backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 15px' }}>
-              <span onClick={() => handleNeverShowPopup(popup.id)} style={{ fontSize: '13px', color: '#f0f0f0', cursor: 'pointer', userSelect: 'none' }}>오늘 그만보기</span>
-              <span onClick={() => handleClosePopup(popup.id)} style={{ fontSize: '15px', fontWeight: 'bold', color: '#333', cursor: 'pointer', userSelect: 'none' }}>닫기</span>
+              <span onClick={() => handleClosePopup(popup.id)} style={{ fontSize: '13px', color: '#999', cursor: 'pointer', userSelect: 'none' }}>닫기</span>
+              <span onClick={() => handleNeverShowPopup(popup.id)} style={{ fontSize: '15px', fontWeight: 'bold', color: '#333', cursor: 'pointer', userSelect: 'none' }}>오늘 그만보기</span>
             </div>
           </div>
         );
@@ -255,7 +256,7 @@ const ShopPage = () => {
         </div>
         <div style={styles.headerRight}>
           <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #333', marginRight: '15px' }}>
-            <input type="text" placeholder="상품 검색" style={{ border: 'none', outline: 'none', width: '120px', padding: '5px' }} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <input type="text" placeholder="상품 검색" style={{ border: 'none', outline: 'none', width: '120px', padding: '5px', color: '#333' }} className="search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             <span style={{ cursor: 'pointer' }}>🔍</span>
           </div>
           <span onClick={() => navigate('/cart')} style={styles.iconLink}>🛍 CART</span>
@@ -265,7 +266,7 @@ const ShopPage = () => {
 
       <nav style={styles.navBar}>
         {["BEST 20", "TOP", "OUTWEAR", "BOTTOM", "ACC", "NEW"].map((cat) => (
-            <span key={cat} style={{...styles.navItem, color: currentCategory === cat ? 'black' : '#888', borderBottom: currentCategory === cat ? '2px solid black' : 'none'}} onClick={() => setCurrentCategory(cat)}>
+            <span key={cat} style={{...styles.navItem, color: currentCategory === cat ? 'black' : '#ccc', borderBottom: currentCategory === cat ? '2px solid black' : 'none'}} onClick={() => setCurrentCategory(cat)}>
                 {cat}
             </span>
         ))}

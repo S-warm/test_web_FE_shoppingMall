@@ -23,7 +23,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     if(!username || !password) {
-        triggerFleetingMessage("아이디(이메일)와 비밀번호를 입력해주세요.", 500);
+        triggerFleetingMessage("아이디(이메일)와 비밀번호를 입력해주세요.", 2000);
         return;
     }
 
@@ -38,12 +38,12 @@ const LoginPage = () => {
         alert(`${response.data.name}님 환영합니다!`);
         navigate('/shop');
       } else {
-        triggerFleetingMessage('아이디 또는 비밀번호가 일치하지 않습니다.', 500);
+        triggerFleetingMessage('아이디 또는 비밀번호가 일치하지 않습니다.', 2000);
       }
 
     } catch (error) {
       console.error("로그인 에러:", error);
-      triggerFleetingMessage('서버 연결 실패!', 500);
+      triggerFleetingMessage('서버 연결 실패!', 2000);
     }
   };
 
@@ -79,15 +79,13 @@ const LoginPage = () => {
             type="text" 
             placeholder="아이디" 
             style={styles.input} 
-            tabIndex="-1" 
-            onChange={(e) => setUsername(e.target.value)} 
-            onKeyPress={(e) => e.key === 'Enter' && handleLogin()} 
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
           />
-          <input 
-            type="password" 
-            placeholder="비밀번호" 
-            style={{...styles.input, marginTop: '-1px'}} 
-            tabIndex="-1" 
+          <input
+            type="password"
+            placeholder="비밀번호"
+            style={{...styles.input, marginTop: '-1px'}}
             onChange={(e) => setPassword(e.target.value)} 
             onKeyPress={(e) => e.key === 'Enter' && handleLogin()} 
           />
@@ -98,7 +96,7 @@ const LoginPage = () => {
           <label htmlFor="keep-login"> 로그인상태유지</label>
         </div>
 
-        <button style={styles.loginBtn} tabIndex="-1" onClick={handleLogin}> 
+        <button style={styles.loginBtn} onClick={handleLogin}>
           로그인
         </button>
 
@@ -111,19 +109,19 @@ const LoginPage = () => {
         </div>
 
         <div style={styles.socialGroup}>
-          <button style={{...styles.socialBtn, background: '#3b5998', color: 'white'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 500)}>
+          <button style={{...styles.socialBtn, background: '#3b5998', color: 'white'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 1000)}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>f</span> facebook으로 시작하기
           </button>
           
-          <button style={{...styles.socialBtn, background: 'white', border: '1px solid #ddd', color: '#333'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 500)}>
+          <button style={{...styles.socialBtn, background: 'white', border: '1px solid #ddd', color: '#333'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 1000)}>
             <span style={{color:'red', fontWeight:'bold', marginRight:'10px'}}>G</span> Google로 시작하기
           </button>
           
-          <button style={{...styles.socialBtn, background: '#03C75A', color: 'white'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 500)}>
+          <button style={{...styles.socialBtn, background: '#03C75A', color: 'white'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 1000)}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>N</span> 네이버로 시작하기
           </button>
 
-           <button style={{...styles.socialBtn, background: '#FEE500', color: '#3C1E1E'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 500)}>
+           <button style={{...styles.socialBtn, background: '#FEE500', color: '#3C1E1E'}} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 1000)}>
             <span style={{fontWeight:'bold', marginRight:'10px'}}>TALK</span> 카카오톡으로 시작하기
           </button>
         </div>
@@ -132,14 +130,14 @@ const LoginPage = () => {
           <span style={styles.dividerText}>또는</span>
         </div>
 
-        <button style={styles.guestBtn} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 500)}>
+        <button style={styles.guestBtn} tabIndex="-1" onClick={() => triggerFleetingMessage('준비 중입니다.', 1000)}>
           비회원 주문예약 조회
         </button>
         <div style={{ textAlign: 'center', marginTop: '15px' }}>
           <span 
             tabIndex="-1" 
             onClick={() => navigate('/signup')}
-            style={{ fontSize: '11px', color: '#d1d1d1', cursor: 'pointer', userSelect: 'none' }}
+            style={{ fontSize: '11px', color: '#888888', cursor: 'pointer', userSelect: 'none' }}
           >
             회원가입
           </span>

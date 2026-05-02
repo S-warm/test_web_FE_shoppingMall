@@ -1,5 +1,5 @@
 // src/pages/SignupPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -20,8 +20,14 @@ const SignupPage = () => {
 
   const [isChecked, setIsChecked] = useState(false);
   
-  // ✨ [추가] 약관 동의 상태
+  // ✨ [추가] 약관 동의 상태 - 약관 페이지 다녀온 경우 자동 체크
   const [agreeTerms, setAgreeTerms] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('hasViewedTerms') === 'true') {
+      setAgreeTerms(true);
+    }
+  }, []);
   
   const [fleetingError, setFleetingError] = useState('');
 
@@ -36,13 +42,13 @@ const SignupPage = () => {
 
   const handleCheckDuplicate = async () => {
     if (!username) {
-      triggerFleetingError("아이디를 입력해주세요.", 500);
+      triggerFleetingError("아이디를 입력해주세요.", 2000);
       return;
     }
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/check-username?username=${username}`);
       if (response.data === true) {
-        triggerFleetingError("이미 사용 중인 아이디입니다.", 500);
+        triggerFleetingError("이미 사용 중인 아이디입니다.", 2000);
         setIsChecked(false); 
         setUsername(""); 
       } else {
@@ -51,40 +57,40 @@ const SignupPage = () => {
       }
     } catch (error) {
       console.error(error);
-      triggerFleetingError("중복 확인 중 오류가 발생했습니다.", 500);
+      triggerFleetingError("중복 확인 중 오류가 발생했습니다.", 2000);
     }
   };
 
   const handleSignup = async () => {
     if (!isChecked) {
-        triggerFleetingError("아이디 중복 확인을 먼저 해주세요!", 500); 
+        triggerFleetingError("아이디 중복 확인을 먼저 해주세요!", 2000); 
         return;
     }
     
     if(!username || !password || !name || !phone || !address || !emailPrefix) {
-        triggerFleetingError("폼 전체의 필수 입력값을 모두 채워주세요.", 500);
+        triggerFleetingError("폼 전체의 필수 입력값을 모두 채워주세요.", 2000);
         return;
     }
 
     if (!emailDomain) {
-        triggerFleetingError("이메일 도메인(@ 뒤)을 입력해주세요.", 500); 
+        triggerFleetingError("이메일 도메인(@ 뒤)을 입력해주세요.", 2000); 
         return;
     }
 
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!passwordRegex.test(password)) {
-        triggerFleetingError("비밀번호 규칙 위반입니다.", 500);
+        triggerFleetingError("비밀번호 규칙 위반입니다. (특수문자 포함 8자 이상)", 2000);
         return; 
     }
 
     if (password !== passwordCheck) {
-        triggerFleetingError("비밀번호가 일치하지 않습니다!", 500);
+        triggerFleetingError("비밀번호가 일치하지 않습니다!", 2000);
         return; 
     }
 
     // ✨ [추가] 약관 동의 체크 여부 확인
     if (!agreeTerms) {
-        triggerFleetingError("개인정보 처리방침 및 이용약관에 동의해주세요.", 500);
+        triggerFleetingError("개인정보 처리방침 및 이용약관에 동의해주세요.", 2000);
         return; 
     }
 
@@ -96,7 +102,7 @@ const SignupPage = () => {
       navigate('/login');
     } catch (error) {
       console.error("회원가입 실패:", error);
-      triggerFleetingError('회원가입 실패!', 500);
+      triggerFleetingError('회원가입 실패!', 2000);
     }
   };
   
@@ -120,8 +126,8 @@ const SignupPage = () => {
 
       <style>
         {`
-          .bad-placeholder::placeholder { color: #f5f5f5 !important; font-weight: 100 !important; font-size: 11px !important; }
-          .drag-hint { color: #cccccc; font-size: 11px; margin-top: 4px; margin-bottom: 10px; letter-spacing: -0.5px; }
+          .bad-placeholder::placeholder { color: #aaaaaa !important; font-weight: 100 !important; font-size: 12px !important; }
+          .drag-hint { color: #888888; font-size: 12px; margin-top: 4px; margin-bottom: 10px; letter-spacing: -0.5px; }
           .drag-hint::selection { background-color: #333333 !important; color: #ffffff !important; }
         `}
       </style>
@@ -139,8 +145,8 @@ const SignupPage = () => {
         </div>
 
         <label style={styles.label}>비밀번호</label>
-        <input id="password"  type="password" className="bad-placeholder" placeholder="비밀번호 입력 (대문자, 특수문자, 숫자 혼합 8자 이상)" tabIndex="-1" style={{ ...styles.fullInput, border: passwordError ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} value={password} onChange={(e) => { setPassword(e.target.value); if(passwordError) setPasswordError(''); }} onBlur={() => { const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; if (password && !passwordRegex.test(password)) { setPasswordError("대문자와 특수문자를 혼합하여 8자 이상 입력해주세요."); } }} />
-        <p className="drag-hint">* 대문자, 특수문자, 숫자 혼합 8자 이상</p>
+        <input id="password"  type="password" className="bad-placeholder" placeholder="특수문자 포함 8자 이상" style={{ ...styles.fullInput, border: passwordError ? '2px solid #ff6b6b' : '1px solid #e1e1e1' }} value={password} onChange={(e) => { setPassword(e.target.value); if(passwordError) setPasswordError(''); }} onBlur={() => { const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; if (password && !passwordRegex.test(password)) { setPasswordError("특수문자를 포함하여 8자 이상 입력해주세요."); } }} />
+        <p className="drag-hint">* 특수문자 포함 8자 이상</p>
         {passwordError && <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>{passwordError}</p>}
         
         <label style={styles.label}>비밀번호 확인</label>
@@ -148,14 +154,14 @@ const SignupPage = () => {
         {isMismatch && <p style={{color:'#ff6b6b', fontSize:'12px', marginTop:'5px', fontWeight:'bold'}}>비밀번호가 일치하지 않습니다!</p>}
 
         <label style={styles.label}>이름</label>
-        <input  id="name" type="text" placeholder="이름을 입력해주세요" tabIndex="-1" value={name} style={styles.fullInput} onChange={(e) => setName(e.target.value)} />
+        <input  id="name" type="text" placeholder="이름을 입력해주세요" value={name} style={styles.fullInput} onChange={(e) => setName(e.target.value)} />
 
         <label style={styles.label}>전화번호</label>
-        <input id="phone"  type="text" className="bad-placeholder" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" tabIndex="-1" value={phone} style={styles.fullInput} onChange={(e) => setPhone(e.target.value)} />
+        <input id="phone"  type="text" className="bad-placeholder" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" value={phone} style={styles.fullInput} onChange={(e) => setPhone(e.target.value)} />
         <p className="drag-hint">* '-' 제외 11자리 입력</p>
 
         <label style={styles.label}>주소</label>
-        <input id="address"  type="text" placeholder="시/구/동 등 주소를 입력해주세요" tabIndex="-1" value={address} style={styles.fullInput} onChange={(e) => setAddress(e.target.value)} />
+        <input id="address"  type="text" placeholder="시/구/동 등 주소를 입력해주세요" value={address} style={styles.fullInput} onChange={(e) => setAddress(e.target.value)} />
 
         <label style={styles.label}>이메일 주소</label>
         <div style={styles.row}>
@@ -177,7 +183,7 @@ const SignupPage = () => {
                 
                 if (!hasViewed) {
                   // 징표가 없으면 체크를 막고 찰나의 에러를 띄웁니다!
-                  triggerFleetingError("약관 전문을 먼저 읽어야 동의가 가능합니다.", 1000);
+                  triggerFleetingError("약관 전문을 먼저 읽어야 동의가 가능합니다.", 2000);
                   return; // 체크 방지
                 }
                 // 징표가 있으면 정상적으로 체크 허용

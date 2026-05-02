@@ -37,9 +37,11 @@ const ProductDetailPage = () => {
   const handlePrevImage = () => setCurrentImageIdx((prev) => (prev - 1 + topImages.length) % topImages.length);
 
   const handleSelectColor = (e, color) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setSelectedColor(color);
     setOpenColorList(false);
+    // D 함정: 색상 선택 후 드롭다운 전체 닫힘 → 사이즈 선택하려면 다시 열어야 함
+    setShowMainDropdown(false);
   };
 
   const handleSelectSize = (e, size) => {
@@ -341,7 +343,7 @@ const styles = {
 
   infoCol: { flex: '1 1 400px', maxWidth: '500px', position: 'sticky', top: '80px' },
   headerGroup: { display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'10px' },
-  productTitle: { fontSize: '24px', fontWeight: '400', margin: 0, lineHeight: '1.4' },
+  productTitle: { fontSize: '24px', fontWeight: '400', margin: 0, lineHeight: '1.4', color: '#888' },
   iconGroup: { display:'flex', gap:'15px' },
   heartIcon: { fontSize:'24px', cursor:'pointer', color:'#bbb' },
   reviewRow: { fontSize: '13px', display:'flex', alignItems:'center', gap:'8px', marginBottom:'30px', color:'#333' },
@@ -371,21 +373,21 @@ const styles = {
   fixedActionArea: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px', position: 'relative', zIndex: 1 },
   quantityRow: { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px', padding:'15px', backgroundColor:'#f9f9f9' },
   counter: { display:'flex', border:'1px solid #ddd', background:'white' },
-  countBtn: { background:'none', border:'none', width:'30px', height:'30px', cursor:'pointer' },
+  countBtn: { background:'none', border:'none', width:'18px', height:'18px', cursor:'pointer', fontSize:'10px', color:'#bbb', outline:'none', padding:0 },
   countNum: { display:'flex', alignItems:'center', padding:'0 10px', fontSize:'14px', fontWeight:'bold' },
   optionPrice: { fontWeight:'bold', fontSize:'16px' },
   totalRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', fontSize: '16px', fontWeight: 'bold' },
   totalPrice: { color: '#ff4800', fontSize: '22px' },
   btnGroup: { display: 'flex', gap: '8px' },
-  cartBtn: { flex: 1, padding: '18px', background: 'white', border: '1px solid #1a1a1a', color: '#1a1a1a', fontWeight: 'bold', cursor: 'pointer', fontSize:'15px' },
-  buyBtn: { flex: 1, padding: '18px', background: '#1a1a1a', border: '1px solid #1a1a1a', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize:'15px' },
+  cartBtn: { flex: 1, padding: '18px', background: 'white', border: '1px solid #ddd', color: '#ccc', fontWeight: 'normal', cursor: 'pointer', fontSize:'13px', outline:'none' },
+  buyBtn: { flex: 1, padding: '18px', background: '#1a1a1a', border: '1px solid #1a1a1a', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize:'15px', outline:'none' },
   transparentOverlay: { position:'fixed', top:0, left:0, right:0, bottom:0, zIndex: 999, cursor:'default' },
 
   detailSection: { borderTop:'2px solid #1a1a1a', paddingTop:'40px', paddingBottom: '100px', maxWidth: '800px', margin: '0 auto' },
   
   // ✨ [함정 스타일] 아코디언 스타일 추가
   accordionWrapper: { borderBottom: '1px solid #e1e1e1', marginBottom: '5px' },
-  accordionHeader: { display: 'flex', justifyContent: 'space-between', padding: '18px 10px', backgroundColor: '#f9f9f9', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', transition: 'background 0.2s' },
+  accordionHeader: { display: 'flex', justifyContent: 'space-between', padding: '18px 10px', backgroundColor: '#f9f9f9', cursor: 'pointer', fontSize: '12px', fontWeight: 'normal', color: '#aaa', transition: 'background 0.2s', outline: 'none' },
   accordionContent: { padding: '20px 10px', backgroundColor: 'white', animation: 'fadeIn 0.3s ease-in-out' },
 
   detailTable: { width: '100%', borderCollapse: 'collapse', fontSize: '13px', color: '#555', textAlign: 'center' },

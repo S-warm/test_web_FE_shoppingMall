@@ -189,7 +189,7 @@ if (window.__log) {
                 <span>배송비 {isCouponApplied ? '(쿠폰적용 할증)' : '(기본 무료)'}</span>
                 <span>+ {shippingFee.toLocaleString()}원</span>
             </div>
-            <div style={{...styles.summaryRow, borderTop: '2px solid #333', marginTop: '15px', paddingTop: '15px', fontWeight: 'bold', fontSize: '20px'}}>
+            <div style={{...styles.summaryRow, borderTop: '1px solid #eee', marginTop: '15px', paddingTop: '15px', fontWeight: 'bold', fontSize: '16px', color: '#bbb'}}>
                 <span>최종 결제 금액</span>
                 <span>{finalPrice.toLocaleString()}원</span>
             </div>
@@ -236,8 +236,8 @@ const styles = {
     title: { textAlign: 'center', marginBottom: '30px', borderBottom: '2px solid #333', paddingBottom: '10px' },
     section: { marginBottom: '40px' },
     subTitle: { fontSize: '18px', marginBottom: '15px', fontWeight: 'bold', color: '#333' },
-    label: { display:'block', marginBottom:'8px', fontSize:'13px', color:'#666', fontWeight:'bold'},
-    input: { width: '100%', padding: '12px', marginBottom: '15px', border: '1px solid #ddd', borderRadius: '4px', boxSizing:'border-box' },
+    label: { display:'block', marginBottom:'8px', fontSize:'11px', color:'#bbb', fontWeight:'normal'},
+    input: { width: '100%', padding: '12px', marginBottom: '15px', border: '1px solid #f0f0f0', borderRadius: '4px', boxSizing:'border-box', outline:'none' },
     
     orderItemList: { borderTop: '2px solid #1a1a1a', borderBottom: '1px solid #ddd', padding: '10px 0' },
     orderItem: { display: 'flex', alignItems: 'center', padding: '15px 0', borderBottom: '1px solid #eee' },
@@ -251,13 +251,13 @@ const styles = {
     inputFlex: { flex: 1, padding: '12px', border: '1px solid #ddd', borderRadius: '4px', boxSizing:'border-box' },
     applyBtn: { padding: '0 20px', backgroundColor: '#333', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', whiteSpace: 'nowrap' },
     
-    summaryBox: { backgroundColor: '#fff', border: '2px solid #1a1a1a', padding: '25px', borderRadius: '8px', marginBottom: '40px' },
-    summaryRow: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '15px', color: '#555' },
+    summaryBox: { backgroundColor: '#fff', border: '1px solid #eee', padding: '25px', borderRadius: '8px', marginBottom: '40px' },
+    summaryRow: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '13px', color: '#bbb' },
 
     paymentMethodContainer: { border: '1px solid #ddd', padding: '20px', borderRadius: '4px', backgroundColor: '#fff' },
     paymentGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' },
-    gridBtn: { padding: '12px 5px', border: '1px solid #e1e1e1', backgroundColor: '#fdfdfd', fontSize: '12px', color: '#666', cursor: 'pointer', borderRadius: '4px', wordBreak: 'keep-all' },
-    activeGridBtn: { padding: '12px 5px', border: '2px solid #333', backgroundColor: '#fff', fontSize: '12px', color: '#333', fontWeight: 'bold', cursor: 'pointer', borderRadius: '4px', wordBreak: 'keep-all' },
+    gridBtn: { padding: '10px 5px', border: '1px solid #f0f0f0', backgroundColor: '#fdfdfd', fontSize: '10px', color: '#aaa', cursor: 'pointer', borderRadius: '4px', wordBreak: 'keep-all', outline:'none' },
+    activeGridBtn: { padding: '10px 5px', border: '2px solid #333', backgroundColor: '#fff', fontSize: '10px', color: '#333', fontWeight: 'bold', cursor: 'pointer', borderRadius: '4px', wordBreak: 'keep-all', outline:'none' },
 
     actionArea: { marginTop: '20px' },
     fakeSubmitBtn: { width: '100%', padding: '25px', backgroundColor: '#0078ff', color: 'white', border: 'none', fontSize: '20px', fontWeight: '900', cursor: 'pointer', borderRadius: '8px' },
